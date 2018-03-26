@@ -1,0 +1,213 @@
+.litebox-outer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: rgba(0, 0, 0, .5);
+}
+
+.litebox-inner {
+  max-width: 90vw;
+  max-height: 90vh;
+  
+  position: relative;
+}
+
+.litebox-image-wrapper {
+  margin: 0;
+  
+  background-color: white;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, .3);
+}
+
+.litebox-image {
+  max-width: 90vw;
+  max-height: 80vh;
+
+  vertical-align: middle;
+}
+
+.litebox-image-caption {
+  padding: 1rem;
+}
+
+.litebox-button {
+  position: absolute;
+
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+
+  border: none;
+  
+  background-color: white;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  cursor: pointer;
+}
+
+.litebox-button:hover {
+  background-color: tomato;
+  fill: white;
+}
+
+.litebox-button-close {
+  top: 0;
+  right: 0;
+
+  background-image: url('../icons/litebox-close.svg');
+}
+
+.litebox-button-next {
+  top: calc(50% - 1.5rem);
+  right: 0;
+
+  background-image: url('../icons/litebox-arrow-right.svg');
+}
+
+.litebox-button-prev {
+  top: calc(50% - 1.5rem);
+  left: 0;
+
+  background-image: url('../icons/litebox-arrow-left.svg');
+}
+
+
+
+.-fade-out {
+  animation: fade-out 500ms ease-in-out 300ms forwards;
+}
+
+.-fade-out .litebox-inner {
+  animation: hide-image-bottom 300ms cubic-bezier(.53,.06,.59,.54) forwards;
+}
+
+.-fade-in {
+  animation: fade-in 500ms ease-in-out forwards;
+}
+
+.-fade-in .litebox-inner {
+  transform: translateY(100px);
+  opacity: 0;
+  animation: show-image-bottom 300ms cubic-bezier(.53,.06,.59,.54) 500ms forwards;
+}
+
+.-hide-image-left .litebox-inner {
+  animation: hide-image-left 300ms ease-in-out forwards;
+}
+
+.-hide-image-right .litebox-inner {
+  animation: hide-image-right 300ms ease-in-out forwards;
+}
+
+.-show-image-left .litebox-inner {
+  animation: show-image-left 300ms ease-in-out forwards;
+}
+
+.-show-image-right .litebox-inner {
+  animation: show-image-right 300ms ease-in-out forwards;
+}
+
+
+
+
+
+
+@keyframes hide-image-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+}
+
+@keyframes hide-image-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes show-image-left {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes show-image-right {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes hide-image-bottom {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes show-image-bottom {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "litebox",
+  "version": "0.0.1",
+  "description": "Simple and dependency-free vanilla lightbox",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "lightbox", "litebox", "javascript", "image"
+  ],
+  "author": "Andreas Remdt",
+  "license": "MIT"
+}
