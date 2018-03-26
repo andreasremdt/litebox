@@ -7,7 +7,6 @@
  */
 class Litebox {
   constructor(options) {
-
     this.defaults = {
       selector: {
         el: '[data-litebox]',
