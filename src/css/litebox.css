@@ -51,6 +51,8 @@
   background-position: center;
 
   cursor: pointer;
+
+  transition: opacity .2s ease-in-out;
 }
 
 .litebox-button:hover {
@@ -79,7 +81,9 @@
   background-image: url('../icons/litebox-arrow-left.svg');
 }
 
-
+.-inactive .litebox-button {
+  opacity: 0;
+}
 
 .-fade-out {
   animation: fade-out 500ms ease-in-out 300ms forwards;
