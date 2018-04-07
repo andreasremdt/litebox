@@ -18,9 +18,11 @@
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-jslint": "^1.0.10",
     "gulp-rename": "^1.2.2",
+    "gulp-sass": "^4.0.0",
     "gulp-uglify": "^3.0.0"
   }
 }

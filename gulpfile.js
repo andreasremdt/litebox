@@ -3,14 +3,18 @@ const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const jslint = require('gulp-jslint');
 const rename = require('gulp-rename');
+const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
 
-gulp.task('compilejs', () => {
-  return gulp.src('src/js/litebox.js')
-    .pipe(babel())
-    .pipe(gulp.dest('dist/js'));
+gulp.task('scss', () => {
+  return gulp.src('src/scss/litebox.scss')
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(autoprefixer({ browsers: ['last 5 versions'] }))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('compressjs', () => {
+gulp.task('js', () => {
   return gulp.src('src/js/litebox.js')
     .pipe(babel())
     .pipe(uglify())
@@ -18,4 +22,4 @@ gulp.task('compressjs', () => {
     .pipe(gulp.dest('dist/js'));
 });
 
-gulp.task('default', ['compressjs']);
+gulp.task('default', ['js', 'scss']);
