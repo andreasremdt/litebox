@@ -7,8 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "lightbox", "litebox", "javascript", "image"
+    "lightbox",
+    "litebox",
+    "javascript",
+    "image"
   ],
   "author": "Andreas Remdt",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "gulp-jslint": "^1.0.10",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0"
+  }
 }
