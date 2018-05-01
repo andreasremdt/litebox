@@ -11,11 +11,16 @@ class Litebox {
     // Get all images
     this.elements = document.querySelectorAll(this.options.el);
 
-    this.litebox = null;
-    this.image = null;
-    this.timeout = null;
-    this.index = 0;
+    this._current = null;
 
+
+    this.init();
+  }
+
+
+  init() {
+    this.createElements();
+    this.build();
     this.registerClickEvents();
     this.registerTouchEvents();
     this.registerKeyboardEvents();
@@ -23,6 +28,22 @@ class Litebox {
 
 
 
+  /**
+   * Creates all the needed HTML elements for the litebox and registers them
+   * globally for access.
+   */
+  createElements() {
+    this._close = document.createElement('button');       // Button that closes the litebox on click
+    this._next = document.createElement('button');        // Button that displays the next image on click
+    this._prev = document.createElement('button');        // Button that displays the previous image on click
+    this._outer = document.createElement('div');          // The outer wrapper of the litebox
+    this._inner = document.createElement('div');          // The inner, centered wrapper of the litebox
+    this._figure = document.createElement('figure');      // The figure that contains the image element
+    this._caption = document.createElement('ficaption');  // The image caption below the image
+    this._image = new Image();                            // The actual image
+  }
+
+  
 
   /**
    * Retrive the default options of Litebox, such as selectors
@@ -42,6 +63,16 @@ class Litebox {
         close: 'Close Litebox',
         next: 'Next image',
         prev: 'Previous image'
+      },
+      classNames: {
+        outer: 'litebox-outer',
+        inner: 'litebox-inner',
+        figure: 'litebox-image-wrapper',
+        caption: 'litebox-image-caption',
+        image: 'litebox-image',
+        close: 'litebox-button litebox-button-close',
+        prev: 'litebox-button litebox-button-prev',
+        next: 'litebox-button litebox-button-next'
       }
     }
   }
@@ -53,7 +84,6 @@ class Litebox {
    * all keys (ESC, left, right) and binds them to their appropriate function.
    */
   registerKeyboardEvents() {
-
     // If keyboard events are disabled, don't do anything
     if (!this.options.keyboardShortcuts) {
       return;
@@ -61,7 +91,7 @@ class Litebox {
 
     window.addEventListener('keydown', (event) => {
       // If no litebox is present in the DOM, don't do anything
-      if (!this.litebox) {
+      if (this.isHidden()) {
         return;
       }
 
@@ -89,7 +119,6 @@ class Litebox {
    * three touch gestures: swipe left, swipe right and swipe down (closing the litebox).
    */
   registerTouchEvents() {
-
     // If touch is disabled, don't do anything
     if (!this.options.touch) {
       return;
@@ -101,7 +130,7 @@ class Litebox {
 
     // Captures the coordinates of the finger on touchstart.
     window.addEventListener('touchstart', (event) => {
-      if (!this.litebox) {
+      if (this.isHidden()) {
         return;
       }
 
@@ -111,9 +140,8 @@ class Litebox {
 
     // On touchmove, calculate the direction and execute the appropriate function
     window.addEventListener('touchmove', (event) => {
-
       // If there is no litebox in the DOM, cancel
-      if (!this.litebox || !xDown || !yDown) {
+      if (this.isHidden() || !xDown || !yDown) {
         return;
       }
 
@@ -139,48 +167,61 @@ class Litebox {
   }
 
 
+  isHidden() {
+    return this._outer.classList.contains('-hidden');
+  }
+
+
 
   /**
-   * 
+   * Registers all click events 
    */
   registerClickEvents() {
     this.elements.forEach((image) => {
       image.addEventListener('click', (event) => {
-        this.index = Array.from(this.elements).indexOf(image);
-        this.prepare(image);
-        
+        this.handleImageChange(image);
+
         event.preventDefault();
       });
     });
-  }
-
-  registerHandlers(close, next, prev, inner) {
-    if (this.options.gallery) {
-      next.addEventListener('click', this.next.bind(this));
-      prev.addEventListener('click', this.prev.bind(this));
-    }
-
-    close.addEventListener('click', this.close.bind(this));
-    inner.addEventListener('mouseenter', this.showControls.bind(this));
-    inner.addEventListener('mouseleave', this.hideControls.bind(this));
-    inner.addEventListener('mousemove', this.clearTimeout.bind(this));
+  
+    this._next.addEventListener('click', this.next.bind(this));
+    this._prev.addEventListener('click', this.prev.bind(this));
+    this._close.addEventListener('click', this.close.bind(this));
+    this._inner.addEventListener('mouseenter', this.showControls.bind(this));
+    this._inner.addEventListener('mouseleave', this.hideControls.bind(this));
+    this._inner.addEventListener('mousemove', this.clearTimeout.bind(this));
   }
 
 
-  toggleElementVisibility(element) {
 
+  handleImageChange(image) {
+    this._current = Array.from(this.elements).indexOf(image);
+
+    this.refresh(image).then(() => {
+      if (document.body.contains(this._outer)) {
+        this._outer.className = `${this.options.classNames.outer} -fade-in -inactive`;
+      } else {
+        document.body.appendChild(this._outer);
+      }
+
+      setTimeout(() => {
+        this._outer.classList.remove('-fade-in');
+      }, 800);
+    });
   }
+
+
+
+
+
 
 
   close(evt) {
-    this.litebox.classList.add('-fade-out');
-    //this.timeout = null;
+    this._outer.classList.add('-fade-out');
 
     setTimeout(() => {
-      document.body.removeChild(this.litebox);
-      this.litebox = null;
-      this.figure = null;
-      this.index = 0;
+      this._outer.classList.add('-hidden');
     }, 800);
   }
 
@@ -191,25 +232,26 @@ class Litebox {
    */
   next() {
     // If there is no next image, don't do anything
-    if (this.index === this.elements.length - 1) {
+    if (this._current === this.elements.length - 1) {
       return;
     }
 
     // Animate the image out
-    this.litebox.classList.add('-hide-image-left');
+    this._outer.classList.add('-hide-image-left');
 
     // When the image has disappeared through animation, continue
     // loading the next one
-    this.litebox.addEventListener('animationend', (evt) => {
-      this.index++;
+    this._outer.addEventListener('animationend', (evt) => {
 
-      this.replaceImage(this.elements[this.index]).then(() => {
-        this.litebox.classList.remove('-hide-image-left');
-        this.litebox.classList.add('-show-image-right');
+      this._current++;
 
-        this.litebox.addEventListener('animationend', (evt) => {
+      this.refresh(this.elements[this._current]).then(() => {
+        this._outer.classList.remove('-hide-image-left');
+        this._outer.classList.add('-show-image-right');
+
+        this._outer.addEventListener('animationend', (evt) => {
           if (evt.animationName === 'show-image-right') {
-            this.litebox.classList.remove('-show-image-right');
+            this._outer.classList.remove('-show-image-right');
           }
         });
       });
@@ -224,25 +266,25 @@ class Litebox {
    */
   prev() {
     // If there is no previous image, don't do anything
-    if (this.index <= 0) {
+    if (this._current <= 0) {
       return;
     }
 
     // Animate the image out
-    this.litebox.classList.add('-hide-image-right');
+    this._outer.classList.add('-hide-image-right');
 
     // When the image has disappeared through animation, continue
     // loading the next one
-    this.litebox.addEventListener('animationend', (evt) => {
-      this.index--;
+    this._outer.addEventListener('animationend', (evt) => {
+      this._current--;
 
-      this.replaceImage(this.elements[this.index]).then(() => {
-        this.litebox.classList.remove('-hide-image-right');
-        this.litebox.classList.add('-show-image-left');
+      this.refresh(this.elements[this._current]).then(() => {
+        this._outer.classList.remove('-hide-image-right');
+        this._outer.classList.add('-show-image-left');
 
-        this.litebox.addEventListener('animationend', (evt) => {
+        this._outer.addEventListener('animationend', (evt) => {
           if (evt.animationName === 'show-image-left') {
-            this.litebox.classList.remove('-show-image-left');
+            this._outer.classList.remove('-show-image-left');
           }
         });
       });
@@ -254,43 +296,36 @@ class Litebox {
 
 
 
-  replaceImage(image) {
+
+
+
+
+
+  refresh(image) {
+    const target = image.getAttribute(this.options.target),
+          caption = image.getAttribute(this.options.caption);
+    
+    if (!target) {
+      return;
+    }
+
+    if (!caption) {
+      this._caption.classList.add('-hidden');
+    } else {
+      this._caption.textContent = caption;
+      this._caption.classList.remove('-hidden');
+    }
+
     return new Promise((resolve, undefined) => {
-      const caption = image.getAttribute(this.options.caption);
-
-      this.image.src = image.getAttribute(this.options.target);
-      this.image.alt = image.getAttribute(this.options.caption);
-
-      if (caption) {
-        this.image.nextElementSibling.textContent = caption;
-        this.image.nextElementSibling.removeAttribute('hidden');
-      } else {
-        this.image.nextElementSibling.setAttribute('hidden', true);
-      }
-
-      this.image.onload = resolve;
+      this._image.src = target;
+      this._image.alt = caption;
+      this._image.onload = resolve;
     });
   }
 
 
 
-  prepare(image) {
-    // Get the image to load based on the attribute
-    const target = image.getAttribute(this.options.target);
-    const caption = image.getAttribute(this.options.caption);
 
-    // If the target is empty or null, don't do anything
-    if (!target) {
-      return;
-    }
-
-    this.litebox = document.body.appendChild(this.createHTML(target, caption));
-
-    // Removes the fade-in class after the litebox has been displayed.
-    this.litebox.firstElementChild.addEventListener('animationend', (evt) => {
-      this.litebox.classList.remove('-fade-in');
-    }, { once: true });
-  }
 
 
   /**
@@ -299,7 +334,7 @@ class Litebox {
    * automatically hidden.
    */
   showControls() {
-    this.litebox.classList.remove('-inactive');
+    this._outer.classList.remove('-inactive');
 
     this.timeout = setTimeout(() => {
       this.hideControls();
@@ -312,7 +347,7 @@ class Litebox {
    * in order to hide the controls.
    */
   hideControls() {
-    this.litebox.classList.add('-inactive');
+    this._outer.classList.add('-inactive');
   }
 
 
@@ -330,76 +365,27 @@ class Litebox {
   /**
    * Creates the HTML for the entire litebox and returns it.
    * 
-   * @param {String} source The link of the image to be loaded.
-   * @param {String} text The caption of the image to be displayed.
    * @returns {HTMLElement} The complete litebox.
    */
-  createHTML(source, text) {
-    // Litebox outer wrapper
-    const outer = document.createElement('div');
-    outer.classList.add('litebox-outer', '-fade-in', '-inactive');
-
-    // Litebox inner wrapper
-    const inner = document.createElement('div');
-    inner.classList.add('litebox-inner');
-
-    // Button for closing the litebox
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.title = 'Close';
-    close.classList.add('litebox-button-close', 'litebox-button');
-
-    let next, prev;
-
-    if (this.options.gallery) {
-      // Button for displaying the next image
-      next = document.createElement('button');
-      next.type = 'button';
-      next.title = 'Next';
-      next.classList.add('litebox-button-next', 'litebox-button');
-  
-      // Button for displaying the previous image
-      prev = document.createElement('button');
-      prev.type = 'button';
-      prev.title = 'Prev';
-      prev.classList.add('litebox-button-prev', 'litebox-button');
-
-      inner.appendChild(next);
-      inner.appendChild(prev);
-    }
-
-    // The actual image
-    const image = new Image();
-    image.src = source;
-    image.alt = text;
-    image.classList.add('litebox-image');
-
-    // The figure element that contains the image and caption
-    const figure = document.createElement('figure');
-    figure.classList.add('litebox-image-wrapper');
-    figure.appendChild(image);
-
-    // The image caption
-    const caption = document.createElement('figcaption');
-    caption.classList.add('litebox-image-caption');
-    caption.textContent = text || '';
-
-    if (!text) {
-      caption.classList.add('-hidden');
-    }
-
-    figure.appendChild(caption);
-
-    // Build the DOM structure
-    outer.appendChild(inner);
-    inner.appendChild(close);
-    inner.appendChild(figure);
-
-    // Register event listeners and their handlers
-    this.registerHandlers(close, next, prev, inner);
-    this.image = image;
-
-    // Return the wrapper and all buttons
-    return outer;
+  build() {
+    this._outer.className   = `${this.options.classNames.outer} -fade-in -inactive`;
+    this._inner.className   = this.options.classNames.inner;
+    this._close.className   = 'litebox-button litebox-button-close';
+    this._close.title       = this.options.labels.close;
+    this._next.className    = 'litebox-button litebox-button-next';
+    this._next.title        = this.options.labels.next;
+    this._prev.className    = 'litebox-button litebox-button-prev';
+    this._prev.title        = this.options.labels.prev;
+    this._figure.className  = this.options.classNames.figure;
+    this._caption.className = this.options.classNames.caption;
+    this._image.className   = this.options.classNames.image;
+    
+    this._outer.appendChild(this._inner);
+    this._inner.appendChild(this._close);
+    this._inner.appendChild(this._next);
+    this._inner.appendChild(this._prev);
+    this._inner.appendChild(this._figure);
+    this._figure.appendChild(this._image);
+    this._figure.appendChild(this._caption);
   }
 }
