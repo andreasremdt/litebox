@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Litebox
  * 
@@ -7,79 +5,183 @@
  */
 class Litebox {
   constructor(options) {
-    this.defaults = {
-      selector: {
-        el: '[data-litebox]',
-        target: 'href',
-        caption: 'title'
-      },
-      animations: {
-        fadeIn: 800,
-        fadeOut: 800
-      },
-      labels: {
-        close: 'Close',
-        next: 'Next image',
-        prev: 'Prev image'
-      }
-    };
+    // Assign options
+    this.options = Object.assign(Litebox.defaults, options);
 
-    this.images = document.querySelectorAll(this.defaults.selector.el);
+    // Get all images
+    this.elements = document.querySelectorAll(this.options.el);
+
     this.litebox = null;
     this.image = null;
     this.timeout = null;
     this.index = 0;
 
-    this.registerEvents();
+    this.registerClickEvents();
+    this.registerTouchEvents();
+    this.registerKeyboardEvents();
   }
 
-  registerEvents() {
-    this.images.forEach((image) => {
-      image.addEventListener('click', (evt) => {
-        this.index = Array.from(this.images).indexOf(image);
-        this.prepare(evt, image);
-      });
-    });
 
-    // Register ESC and arrow keys for navigation
-    window.addEventListener('keydown', (evt) => {
 
-      // If there is no litebox displayed, don't do anything
+
+  /**
+   * Retrive the default options of Litebox, such as selectors
+   * or animation attributes.
+   * 
+   * @return {Object} The default options
+   */
+  static get defaults() {
+    return {
+      el: '[data-litebox]',
+      target: 'href',
+      caption: 'title',
+      gallery: true,
+      keyboardShortcuts: true,
+      touch: true,
+      labels: {
+        close: 'Close Litebox',
+        next: 'Next image',
+        prev: 'Previous image'
+      }
+    }
+  }
+
+
+
+  /**
+   * If the users has enabled keyboard events, this method registers
+   * all keys (ESC, left, right) and binds them to their appropriate function.
+   */
+  registerKeyboardEvents() {
+
+    // If keyboard events are disabled, don't do anything
+    if (!this.options.keyboardShortcuts) {
+      return;
+    }
+
+    window.addEventListener('keydown', (event) => {
+      // If no litebox is present in the DOM, don't do anything
       if (!this.litebox) {
         return;
       }
 
-      switch (evt.keyCode) {
-        case 27: // ESC
-          this.close();
-          break;
-        case 39: // Arrow right
-          this.next();
-          break;
-        case 37: // Arrow left
-          this.prev();
+      // ESC key is pressed, close litebox
+      if (event.keyCode === 27) {
+        this.close();
+      }
+
+      // Right arrow is pressed and gallery is enabled -> display next image
+      if (event.keyCode === 39 && this.options.gallery) {
+        this.next();
+      }
+
+      // Left arrow is pressed and gallery is enabled -> display previous image
+      if (event.keyCode === 37 && this.options.gallery) {
+        this.prev();
       }
     });
   }
 
+
+
+  /**
+   * If the users has enabled touch events, this method registers
+   * three touch gestures: swipe left, swipe right and swipe down (closing the litebox).
+   */
+  registerTouchEvents() {
+
+    // If touch is disabled, don't do anything
+    if (!this.options.touch) {
+      return;
+    }
+
+    // Initialize touch coordinates
+    let xDown = null,
+        yDown = null;
+
+    // Captures the coordinates of the finger on touchstart.
+    window.addEventListener('touchstart', (event) => {
+      if (!this.litebox) {
+        return;
+      }
+
+      xDown = event.touches[0].clientX;
+      yDown = event.touches[0].clientY;
+    });
+
+    // On touchmove, calculate the direction and execute the appropriate function
+    window.addEventListener('touchmove', (event) => {
+
+      // If there is no litebox in the DOM, cancel
+      if (!this.litebox || !xDown || !yDown) {
+        return;
+      }
+
+      let xUp = event.touches[0].clientX,
+          yUp = event.touches[0].clientY;
+
+      if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
+        if ((xDown - xUp) > 0) {
+          this.next();
+        } else {
+          this.prev();
+        }
+      } else {
+        if ((yDown - yUp) < 0) {
+          this.close();
+        }
+      }
+
+      // Reset the coordinates
+      xDown = null;
+      yDown = null;
+    });
+  }
+
+
+
+  /**
+   * 
+   */
+  registerClickEvents() {
+    this.elements.forEach((image) => {
+      image.addEventListener('click', (event) => {
+        this.index = Array.from(this.elements).indexOf(image);
+        this.prepare(image);
+        
+        event.preventDefault();
+      });
+    });
+  }
+
   registerHandlers(close, next, prev, inner) {
-    next.addEventListener('click', this.next.bind(this));
-    prev.addEventListener('click', this.prev.bind(this));
+    if (this.options.gallery) {
+      next.addEventListener('click', this.next.bind(this));
+      prev.addEventListener('click', this.prev.bind(this));
+    }
+
     close.addEventListener('click', this.close.bind(this));
     inner.addEventListener('mouseenter', this.showControls.bind(this));
     inner.addEventListener('mouseleave', this.hideControls.bind(this));
     inner.addEventListener('mousemove', this.clearTimeout.bind(this));
   }
 
+
+  toggleElementVisibility(element) {
+
+  }
+
+
   close(evt) {
     this.litebox.classList.add('-fade-out');
+    //this.timeout = null;
 
     setTimeout(() => {
       document.body.removeChild(this.litebox);
       this.litebox = null;
       this.figure = null;
       this.index = 0;
-    }, this.defaults.animations.fadeOut);
+    }, 800);
   }
 
 
@@ -89,7 +191,7 @@ class Litebox {
    */
   next() {
     // If there is no next image, don't do anything
-    if (this.index === this.images.length - 1) {
+    if (this.index === this.elements.length - 1) {
       return;
     }
 
@@ -101,7 +203,7 @@ class Litebox {
     this.litebox.addEventListener('animationend', (evt) => {
       this.index++;
 
-      this.replaceImage(this.images[this.index]).then(() => {
+      this.replaceImage(this.elements[this.index]).then(() => {
         this.litebox.classList.remove('-hide-image-left');
         this.litebox.classList.add('-show-image-right');
 
@@ -134,7 +236,7 @@ class Litebox {
     this.litebox.addEventListener('animationend', (evt) => {
       this.index--;
 
-      this.replaceImage(this.images[this.index]).then(() => {
+      this.replaceImage(this.elements[this.index]).then(() => {
         this.litebox.classList.remove('-hide-image-right');
         this.litebox.classList.add('-show-image-left');
 
@@ -154,10 +256,10 @@ class Litebox {
 
   replaceImage(image) {
     return new Promise((resolve, undefined) => {
-      const caption = image.getAttribute(this.defaults.selector.caption);
+      const caption = image.getAttribute(this.options.caption);
 
-      this.image.src = image.getAttribute(this.defaults.selector.target);
-      this.image.alt = image.getAttribute(this.defaults.selector.caption);
+      this.image.src = image.getAttribute(this.options.target);
+      this.image.alt = image.getAttribute(this.options.caption);
 
       if (caption) {
         this.image.nextElementSibling.textContent = caption;
@@ -172,13 +274,10 @@ class Litebox {
 
 
 
-  prepare(evt, image) {
-    // Prevents the browser from loading the image in a new tab
-    evt.preventDefault();
-
+  prepare(image) {
     // Get the image to load based on the attribute
-    const target = image.getAttribute(this.defaults.selector.target);
-    const caption = image.getAttribute(this.defaults.selector.caption);
+    const target = image.getAttribute(this.options.target);
+    const caption = image.getAttribute(this.options.caption);
 
     // If the target is empty or null, don't do anything
     if (!target) {
@@ -213,9 +312,7 @@ class Litebox {
    * in order to hide the controls.
    */
   hideControls() {
-    this.timeout = setTimeout(() => {
-      this.litebox.classList.add('-inactive');
-    }, 1000);
+    this.litebox.classList.add('-inactive');
   }
 
 
@@ -249,20 +346,27 @@ class Litebox {
     // Button for closing the litebox
     const close = document.createElement('button');
     close.type = 'button';
-    close.title = this.defaults.labels.close;
+    close.title = 'Close';
     close.classList.add('litebox-button-close', 'litebox-button');
 
-    // Button for displaying the next image
-    const next = document.createElement('button');
-    next.type = 'button';
-    next.title = this.defaults.labels.next;
-    next.classList.add('litebox-button-next', 'litebox-button');
+    let next, prev;
 
-    // Button for displaying the previous image
-    const prev = document.createElement('button');
-    prev.type = 'button';
-    prev.title = this.defaults.labels.prev;
-    prev.classList.add('litebox-button-prev', 'litebox-button');
+    if (this.options.gallery) {
+      // Button for displaying the next image
+      next = document.createElement('button');
+      next.type = 'button';
+      next.title = 'Next';
+      next.classList.add('litebox-button-next', 'litebox-button');
+  
+      // Button for displaying the previous image
+      prev = document.createElement('button');
+      prev.type = 'button';
+      prev.title = 'Prev';
+      prev.classList.add('litebox-button-prev', 'litebox-button');
+
+      inner.appendChild(next);
+      inner.appendChild(prev);
+    }
 
     // The actual image
     const image = new Image();
@@ -289,8 +393,6 @@ class Litebox {
     // Build the DOM structure
     outer.appendChild(inner);
     inner.appendChild(close);
-    inner.appendChild(next);
-    inner.appendChild(prev);
     inner.appendChild(figure);
 
     // Register event listeners and their handlers

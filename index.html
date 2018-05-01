@@ -25,15 +25,13 @@
     </a>
 
     
-    <script src="dist/js/litebox.js"></script>
+    <script src="src/js/litebox.js"></script>
     <script>
       new Litebox({
-        el: '[data-lightbox]',
-        animation: true,
+        el: '[data-litebox]',
+        keyboardShortcuts: true,
         gallery: true,
-        animations: {
-          fadeIn: 300
-        }
+        touch: false
       });
     </script>
   </body>
