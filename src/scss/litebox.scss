@@ -1,5 +1,10 @@
+// Buttons
+$btn-bg: rgba(255, 255, 255, .5);
+$btn-icons: rgb(255, 255, 255);
+$btn-hover: rgb(227, 119, 132);
+
 $background: white;
-$button-hover: tomato;
+$button-hover: rgb(255, 98, 71);
 
 
 .litebox-outer {
@@ -17,6 +22,10 @@ $button-hover: tomato;
 
   &.-hidden {
     pointer-events: none;
+    opacity: 0;
+  }
+
+  &.-inactive .litebox-button {
     opacity: 0;
   }
 }
@@ -51,53 +60,130 @@ $button-hover: tomato;
   }
 }
 
+
+
+/**
+ * Buttons
+ * ---------------------------------------------------------
+ *
+ * All litebox buttons share this class
+ */
 .litebox-button {
   position: absolute;
-
   width: 3rem;
-  height: 3rem;
   padding: 0;
 
   border: none;
   
-  background-color: $background;
+  background-color: $btn-bg;
   background-repeat: no-repeat;
   background-position: center;
 
-  cursor: pointer;
-
-  transition: opacity .2s ease-in-out;
+  transition: opacity .2s ease-in-out, background-color .2s ease-in-out;
 
   &:hover {
-    background-color: $button-hover;
-    fill: $background;
+    background-color: $btn-icons;
+  }
+
+  &.-hidden {
+    display: none;
   }
 }
 
+/*
+ * "Close" button
+ */
 .litebox-button-close {
   top: 0;
   right: 0;
+  height: 3rem;
 
-  background-image: url('../icons/litebox-close.svg');
+  &::before, &::after {
+    position: absolute;
+    width: 2px;
+    height: 25px;
+    top: calc(50% - 12.5px);
+    left: calc(50% - 1px);
+    
+    content: '';
+
+    background-color: $btn-icons;
+
+    transition: background-color .2s ease-in-out;
+  }
+  
+  &::before {
+    transform: rotateZ(45deg);
+  }
+  
+  &::after {
+    transform: rotateZ(135deg);
+  }
+
+  &:hover::before,
+  &:hover::after {
+    background-color: $btn-hover;
+  }
 }
 
-.litebox-button-next {
-  top: calc(50% - 1.5rem);
-  right: 0;
-
-  background-image: url('../icons/litebox-arrow-right.svg');
-}
-
+/*
+ * Common styles between the "next" and "prev" button
+ */
+.litebox-button-next,
 .litebox-button-prev {
   top: calc(50% - 1.5rem);
+  height: 6rem;
+  
+  &::before {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: calc(50% - 10px);
+    
+    content: '';
+
+    transform: rotateZ(45deg);
+    transition: border-color .2s ease-in-out;
+  }
+
+  &:hover::before {
+    border-color: $btn-hover;
+  }
+}
+
+/*
+ * "Next image" Button
+ */
+.litebox-button-next {
+  right: 0;
+
+  &::before {
+    right: 1.1rem;
+    
+    border-right: 2px solid $btn-icons;
+    border-top: 2px solid $btn-icons;
+  }
+}
+
+/*
+ * "Previous image" Button
+ */
+.litebox-button-prev {
   left: 0;
 
-  background-image: url('../icons/litebox-arrow-left.svg');
+  &::before {
+    left: 1.1rem;
+    
+    border-left: 2px solid $btn-icons;
+    border-bottom: 2px solid $btn-icons;
+  }
 }
 
-.-inactive .litebox-button {
-  opacity: 0;
-}
+
+
+
+
+
 
 .-fade-out {
   animation: fade-out 500ms ease-in-out 300ms forwards;

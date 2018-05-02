@@ -11,19 +11,26 @@ class Litebox {
     // Get all images
     this.elements = document.querySelectorAll(this.options.el);
 
+    // The current displayed image. Litebox keeps track of
+    // this for the gallery feature.
     this._current = null;
 
-
+    // Start litebox
     this.init();
   }
 
 
+
+  /**
+   * Initializes the creation of each DOM element and
+   * registers all available events.
+   */
   init() {
-    this.createElements();
-    this.build();
-    this.registerClickEvents();
-    this.registerTouchEvents();
-    this.registerKeyboardEvents();
+    this.createElements();          // Creates all HTML elements
+    this.build();                   // Builds the DOM structure
+    this.registerMouseEvents();     // Registers mouse events
+    this.registerTouchEvents();     // Registers touch events
+    this.registerKeyboardEvents();  // Registers keyboard events
   }
 
 
@@ -43,6 +50,34 @@ class Litebox {
     this._image = new Image();                            // The actual image
   }
 
+
+
+  /**
+   * Builds the entire DOM structure of litebox and appends
+   * the classes to each element.
+   */
+  build() {
+    this._outer.className = `${this.options.classNames.outer} -fade-in`;
+    this._inner.className = this.options.classNames.inner;
+    this._close.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonClose}`;
+    this._close.title = this.options.labels.close;
+    this._next.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonNext}`;
+    this._next.title = this.options.labels.next;
+    this._prev.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonPrev}`;
+    this._prev.title = this.options.labels.prev;
+    this._figure.className = this.options.classNames.figure;
+    this._caption.className = this.options.classNames.caption;
+    this._image.className = this.options.classNames.image;
+
+    this._outer.appendChild(this._inner);
+    this._inner.appendChild(this._close);
+    this._inner.appendChild(this._next);
+    this._inner.appendChild(this._prev);
+    this._inner.appendChild(this._figure);
+    this._figure.appendChild(this._image);
+    this._figure.appendChild(this._caption);
+  }
+
   
 
   /**
@@ -59,6 +94,8 @@ class Litebox {
       gallery: true,
       keyboardShortcuts: true,
       touch: true,
+      autohideControls: true,
+      loop: false,
       labels: {
         close: 'Close Litebox',
         next: 'Next image',
@@ -70,9 +107,10 @@ class Litebox {
         figure: 'litebox-image-wrapper',
         caption: 'litebox-image-caption',
         image: 'litebox-image',
-        close: 'litebox-button litebox-button-close',
-        prev: 'litebox-button litebox-button-prev',
-        next: 'litebox-button litebox-button-next'
+        buttonGeneral: 'litebox-button',
+        buttonClose: 'litebox-button-close',
+        buttonPrev: 'litebox-button-prev',
+        buttonNext: 'litebox-button-next'
       }
     }
   }
@@ -167,16 +205,12 @@ class Litebox {
   }
 
 
-  isHidden() {
-    return this._outer.classList.contains('-hidden');
-  }
-
-
-
+  
   /**
-   * Registers all click events 
+   * Registers all mouse events.
    */
-  registerClickEvents() {
+  registerMouseEvents() {
+    // Adds an event listener to every image found
     this.elements.forEach((image) => {
       image.addEventListener('click', (event) => {
         this.handleImageChange(image);
@@ -188,19 +222,26 @@ class Litebox {
     this._next.addEventListener('click', this.next.bind(this));
     this._prev.addEventListener('click', this.prev.bind(this));
     this._close.addEventListener('click', this.close.bind(this));
-    this._inner.addEventListener('mouseenter', this.showControls.bind(this));
-    this._inner.addEventListener('mouseleave', this.hideControls.bind(this));
-    this._inner.addEventListener('mousemove', this.clearTimeout.bind(this));
+
+    if (this.options.autohideControls) {
+      this._inner.addEventListener('mouseenter', this.showControls.bind(this));
+      this._inner.addEventListener('mouseleave', this.hideControls.bind(this));
+      this._inner.addEventListener('mousemove', this.clearTimeout.bind(this));
+    }
   }
 
 
 
+  /**
+   * 
+   * @param {*} image 
+   */
   handleImageChange(image) {
     this._current = Array.from(this.elements).indexOf(image);
 
-    this.refresh(image).then(() => {
+    this.load(image).then(() => {
       if (document.body.contains(this._outer)) {
-        this._outer.className = `${this.options.classNames.outer} -fade-in -inactive`;
+        this._outer.className = `${this.options.classNames.outer} -fade-in`;
       } else {
         document.body.appendChild(this._outer);
       }
@@ -213,12 +254,79 @@ class Litebox {
 
 
 
+  /**
+   * Loads the requested image asynchonously if available.
+   * 
+   * @param {HTMLElement} image The actual image to load
+   * @returns {Promise} 
+   */
+  load(image) {
+    const target = image.getAttribute(this.options.target);
+
+    // If there is no image return
+    if (!target) {
+      return;
+    }
+
+    // Hide figcaption if there is no caption
+    this.toggleCaption(image.getAttribute(this.options.caption));
+
+    // Hide prev/next button of last or first image
+    this.toggleButtons();
+
+    // Load the image asynchronously and resolve once loaded
+    return new Promise((resolve, undefined) => {
+      this._image.src = target;
+      this._image.onload = resolve;
+    });
+  }
+
+
+
+  /**
+   * Either shows or hides the caption, depending on
+   * whether there is a text or not.
+   * 
+   * @param {String} caption The caption text 
+   */
+  toggleCaption(caption) {
+    if (!caption) {
+      this._caption.classList.add('-hidden');
+    } else {
+      this._caption.textContent = caption;
+      this._caption.classList.remove('-hidden');
+    }
+  }
+
+
+
+  /**
+   * Either displays or hides the next/prev button,
+   * depending on whether there is a next/previous image.
+   */
+  toggleButtons() {
+    if (this.isLast() && !this.options.loop) {
+      this._next.classList.add('-hidden');
+    } else {
+      this._next.classList.remove('-hidden');
+    }
+
+    if (this.isFirst() && !this.options.loop) {
+      this._prev.classList.add('-hidden');
+    } else {
+      this._prev.classList.remove('-hidden');
+    }
+  }
+
+
+
 
 
 
 
   close(evt) {
     this._outer.classList.add('-fade-out');
+    this._current = null;
 
     setTimeout(() => {
       this._outer.classList.add('-hidden');
@@ -233,7 +341,11 @@ class Litebox {
   next() {
     // If there is no next image, don't do anything
     if (this._current === this.elements.length - 1) {
-      return;
+      if (this.options.loop) {
+        this._current = -1;
+      } else {
+        return;
+      }
     }
 
     // Animate the image out
@@ -245,7 +357,7 @@ class Litebox {
 
       this._current++;
 
-      this.refresh(this.elements[this._current]).then(() => {
+      this.load(this.elements[this._current]).then(() => {
         this._outer.classList.remove('-hide-image-left');
         this._outer.classList.add('-show-image-right');
 
@@ -267,7 +379,11 @@ class Litebox {
   prev() {
     // If there is no previous image, don't do anything
     if (this._current <= 0) {
-      return;
+      if (this.options.loop) {
+        this._current = this.elements.length;
+      } else {
+        return;
+      }
     }
 
     // Animate the image out
@@ -278,7 +394,7 @@ class Litebox {
     this._outer.addEventListener('animationend', (evt) => {
       this._current--;
 
-      this.refresh(this.elements[this._current]).then(() => {
+      this.load(this.elements[this._current]).then(() => {
         this._outer.classList.remove('-hide-image-right');
         this._outer.classList.add('-show-image-left');
 
@@ -301,27 +417,7 @@ class Litebox {
 
 
 
-  refresh(image) {
-    const target = image.getAttribute(this.options.target),
-          caption = image.getAttribute(this.options.caption);
-    
-    if (!target) {
-      return;
-    }
-
-    if (!caption) {
-      this._caption.classList.add('-hidden');
-    } else {
-      this._caption.textContent = caption;
-      this._caption.classList.remove('-hidden');
-    }
-
-    return new Promise((resolve, undefined) => {
-      this._image.src = target;
-      this._image.alt = caption;
-      this._image.onload = resolve;
-    });
-  }
+  
 
 
 
@@ -338,7 +434,7 @@ class Litebox {
 
     this.timeout = setTimeout(() => {
       this.hideControls();
-    }, 500);
+    }, 2000);
   }
   
 
@@ -362,30 +458,36 @@ class Litebox {
   }
 
 
+
   /**
-   * Creates the HTML for the entire litebox and returns it.
+   * Returns true if litebox is not currently active.
    * 
-   * @returns {HTMLElement} The complete litebox.
+   * @returns {Boolean}
    */
-  build() {
-    this._outer.className   = `${this.options.classNames.outer} -fade-in -inactive`;
-    this._inner.className   = this.options.classNames.inner;
-    this._close.className   = 'litebox-button litebox-button-close';
-    this._close.title       = this.options.labels.close;
-    this._next.className    = 'litebox-button litebox-button-next';
-    this._next.title        = this.options.labels.next;
-    this._prev.className    = 'litebox-button litebox-button-prev';
-    this._prev.title        = this.options.labels.prev;
-    this._figure.className  = this.options.classNames.figure;
-    this._caption.className = this.options.classNames.caption;
-    this._image.className   = this.options.classNames.image;
-    
-    this._outer.appendChild(this._inner);
-    this._inner.appendChild(this._close);
-    this._inner.appendChild(this._next);
-    this._inner.appendChild(this._prev);
-    this._inner.appendChild(this._figure);
-    this._figure.appendChild(this._image);
-    this._figure.appendChild(this._caption);
+  isHidden() {
+    return this._outer.classList.contains('-hidden');
+  }
+
+
+
+  /**
+   * Returns true if the current image is the last one in the gallery.
+   * 
+   * @returns {Boolean}
+   */
+  isLast() {
+    return this._current === this.elements.length - 1;
+  }
+
+
+
+  /**
+   * Returns true if the current image is the first one in the gallery.
+   * 
+   * @returns {Boolean}
+   */
+  isFirst() {
+    return this._current <= 0;
   }
 }
+
