@@ -5,8 +5,14 @@
  */
 class Litebox {
   constructor(options) {
-    // Assign options
-    this.options = Object.assign(Litebox.defaults, options);
+    // Assign options and throw an error if the given object is invalid
+    if (!Litebox._isObject(options)) {
+      this.options = Litebox.defaults;
+
+      console.warn('(Litebox): The given object for options is invalid, please make sure that you submit an actual object. Default options will be used.');
+    } else {
+      this.options = Litebox._merge(Litebox.defaults, options);
+    }
 
     // Get all images
     this.elements = document.querySelectorAll(this.options.el);
@@ -14,6 +20,8 @@ class Litebox {
     // The current displayed image. Litebox keeps track of
     // this for the gallery feature.
     this._current = null;
+
+    this.VERSION = '0.6.2';
 
     // Start litebox
     this.init();
@@ -58,7 +66,7 @@ class Litebox {
    * the classes to each element.
    */
   build() {
-    this._outer.className = `${this.options.classNames.outer} -fade-in`;
+    this._outer.className = `${this.options.classNames.outer} ${this.options.animation && '-fade-in'}`;
     this._inner.className = this.options.classNames.inner;
     this._close.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonClose}`;
     this._close.title = this.options.labels.close;
@@ -72,8 +80,12 @@ class Litebox {
 
     this._outer.appendChild(this._inner);
     this._inner.appendChild(this._close);
-    this._inner.appendChild(this._next);
-    this._inner.appendChild(this._prev);
+    
+    if (this.options.gallery) {
+      this._inner.appendChild(this._next);
+      this._inner.appendChild(this._prev);
+    }
+
     this._inner.appendChild(this._figure);
     this._figure.appendChild(this._image);
     this._figure.appendChild(this._caption);
@@ -98,6 +110,7 @@ class Litebox {
       autohideControls: true,
       loop: false,
       slideshow: false,
+      animation: true,
       labels: {
         close: 'Close Litebox',
         next: 'Next image',
@@ -262,7 +275,7 @@ class Litebox {
 
     this.load(image).then(() => {
       if (document.body.contains(this._outer)) {
-        this._outer.className = `${this.options.classNames.outer} -fade-in`;
+        this._outer.className = `${this.options.classNames.outer} ${this.options.animation && '-fade-in'}`;
       } else {
         document.body.appendChild(this._outer);
       }
@@ -341,17 +354,31 @@ class Litebox {
 
 
 
+  animate(type) {
+    switch (type) {
+      case 'close':
+        break;
+      case 'next':
+        break;
+      case 'prev':
+        break;
+      default:
 
+    }
+  }
 
 
 
   close(evt) {
-    this._outer.classList.add('-fade-out');
+    if (this.options.animation) {
+      this._outer.classList.add('-fade-out');
+    }
+    
     this._current = null;
 
     setTimeout(() => {
       this._outer.classList.add('-hidden');
-    }, 800);
+    }, this.options.animation ? 800 : 0);
   }
 
 
@@ -513,6 +540,45 @@ class Litebox {
    */
   isFirst() {
     return this._current <= 0;
+  }
+
+
+
+  /**
+   * Checks if a given item is an object.
+   * 
+   * @param {Object} item The object to check
+   * @returns {Boolean}
+   */
+  static _isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+  }
+
+
+
+  /**
+   * Deep merges two objectes.
+   *  
+   * @param {Object} target The target object to merge in
+   * @param {Object} source The source object to merge from
+   * @returns {Object} The newly merged object
+   */
+  static _merge(target, source) {
+    let output = Object.assign({}, target);
+
+    Object.keys(source).forEach((key) => {
+      if (Litebox._isObject(source[key])) {
+        if (!(key in target)) {
+          Object.assign(output, { [key]: source[key] });
+        } else {
+          output[key] = Litebox._merge(target[key], source[key]);
+        }
+      } else {
+        Object.assign(output, { [key]: source[key] });
+      }
+    });
+
+    return output;
   }
 }
 
