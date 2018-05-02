@@ -21,7 +21,7 @@ class Litebox {
     // this for the gallery feature.
     this._current = null;
 
-    this.VERSION = '0.6.2';
+    this.VERSION = '0.7.0';
 
     // Start litebox
     this.init();
