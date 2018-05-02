@@ -25,8 +25,10 @@ $button-hover: rgb(255, 98, 71);
     opacity: 0;
   }
 
-  &.-inactive .litebox-button {
-    opacity: 0;
+  &.-inactive {
+    .litebox-button, .litebox-image-caption {
+      opacity: 0;
+    }
   }
 }
 
@@ -39,6 +41,7 @@ $button-hover: rgb(255, 98, 71);
 
 .litebox-image-wrapper {
   margin: 0;
+  position: relative;
   
   background-color: $background;
   box-shadow: 0 2rem 4rem rgba(0, 0, 0, .3);
@@ -52,8 +55,15 @@ $button-hover: rgb(255, 98, 71);
 }
 
 .litebox-image-caption {
-  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
   padding: 1rem;
+  box-sizing: border-box;
+
+  background-color: $btn-bg;
+
+  transition: opacity .2s ease-in-out;
 
   &.-hidden {
     display: none;
@@ -79,6 +89,7 @@ $button-hover: rgb(255, 98, 71);
   background-repeat: no-repeat;
   background-position: center;
 
+  z-index: 9;
   transition: opacity .2s ease-in-out, background-color .2s ease-in-out;
 
   &:hover {

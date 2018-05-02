@@ -31,6 +31,7 @@ class Litebox {
     this.registerMouseEvents();     // Registers mouse events
     this.registerTouchEvents();     // Registers touch events
     this.registerKeyboardEvents();  // Registers keyboard events
+    this.slideshow();
   }
 
 
@@ -96,6 +97,7 @@ class Litebox {
       touch: true,
       autohideControls: true,
       loop: false,
+      slideshow: false,
       labels: {
         close: 'Close Litebox',
         next: 'Next image',
@@ -222,12 +224,31 @@ class Litebox {
     this._next.addEventListener('click', this.next.bind(this));
     this._prev.addEventListener('click', this.prev.bind(this));
     this._close.addEventListener('click', this.close.bind(this));
+    this._outer.addEventListener('click', (event) => event.target === this._outer && this.close());
 
     if (this.options.autohideControls) {
       this._inner.addEventListener('mouseenter', this.showControls.bind(this));
       this._inner.addEventListener('mouseleave', this.hideControls.bind(this));
       this._inner.addEventListener('mousemove', this.clearTimeout.bind(this));
     }
+  }
+
+
+
+  slideshow() {
+    if (!this.options.slideshow) {
+      return;
+    }
+
+    if (isNaN(parseInt(this.options.slideshow))) {
+      console.warn(`(Litebox): Received an invalid number for the slideshow timing. '${this.options.slideshow}' is not a number.`);
+      
+      return;
+    }
+
+    this._interval = setInterval(() => {
+      this.next();
+    }, this.options.slideshow);
   }
 
 
@@ -344,6 +365,10 @@ class Litebox {
       if (this.options.loop) {
         this._current = -1;
       } else {
+        if (this._interval) {
+          clearInterval(this._interval);
+        }
+
         return;
       }
     }
