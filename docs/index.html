@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/litebox.min.css">
   </head>
   <body>
     <div class="container">
@@ -39,11 +40,10 @@
 
       <main class="main-content">
         <nav class="main-navigation">
-          <a href="#intro" class="link -active">Introduction</a>
-          <a href="#examples" class="link">Examples</a>
-          <a href="#getting-started" class="link">Getting started</a>
-          <a href="#options" class="link">Options</a>
-          <a href="#links" class="link">Links</a>
+          <a href="#intro" class="link -active" data-link>Introduction</a>
+          <a href="#examples" class="link" data-link>Examples</a>
+          <a href="#getting-started" class="link" data-link>Getting started</a>
+          <a href="#options" class="link" data-link>Options</a>
         </nav>
 
         <section class="section">
@@ -116,13 +116,13 @@
             <figcaption class="caption">
               <h3>Three individual images</h3>
             </figcaption>
-            <a class="overlay" href="images/examples/areal-landscape.jpg">
+            <a class="overlay" href="images/examples/areal-landscape.jpg" data-litebox>
               <img src="images/examples/previews/areal-landscape.jpg" class="image" alt="Areal landscape" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/cascade-ice-island.jpg">
+            <a class="overlay" href="images/examples/cascade-ice-island.jpg" data-litebox>
               <img src="images/examples/previews/cascade-ice-island.jpg" class="image" alt=" Cascade in cce island" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/clouds-dawn-dusk.jpg">
+            <a class="overlay" href="images/examples/clouds-dawn-dusk.jpg" data-litebox>
               <img src="images/examples/previews/clouds-dawn-dusk.jpg" class="image" alt="Clouds in dawn / dusk" width="500" height="281">
             </a>
           </figure>
@@ -131,13 +131,13 @@
             <figcaption class="caption">
               <h3>Three images as part of a gallery</h3>
             </figcaption>
-            <a class="overlay" href="images/examples/mountains-dusk.jpg">
+            <a class="overlay" href="images/examples/mountains-dusk.jpg" data-litebox>
               <img src="images/examples/previews/mountains-dusk.jpg" class="image" alt="Mountains in dusk" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/mountains-forest.jpg">
+            <a class="overlay" href="images/examples/mountains-forest.jpg" data-litebox>
               <img src="images/examples/previews/mountains-forest.jpg" class="image" alt="Forest with mountains" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/snowy-road-mountains.jpg">
+            <a class="overlay" href="images/examples/snowy-road-mountains.jpg" data-litebox>
               <img src="images/examples/previews/snowy-road-mountains.jpg" class="image" alt="Snowy road with mountains" width="500" height="281">
             </a>
           </figure>
@@ -149,31 +149,33 @@
           <h2 class="heading" id="getting-started">Getting started</h2>
 
           <ol>
-            <li>Download the latest version of Litebox <a href="">here</a> and extract the ZIP file on your hard disk.</li>
-            <li>Copy the following files into your project folder:<br>
-              <code>litebox.min.js</code>, <code>litebox.min.css</code>, <code>icons.svg</code></li>
-            <li>Include the CSS and JavaScript into your website:
-              <ul>
-                <li>Place the CSS into the head of your HTML:<br>
-                  <code>&lt;link rel="stylesheet" href="/path/to/litebox.min.css"&gt;</code></li>
-                <li>Place the JavaScript before the <code>&lt;/body&gt;</code> tag in your HTML:<br>
-                  <code>&lt;script src="/path/to/litebox.min.css"&gt;&lt;/script&gt;</code></li>
-              </ul>
+            <li>Download the latest release of Litebox from this repository to your computer.</li>
+            <li>Extract the ZIP-file. Copy <code>litebox.min.js</code> into your JavaScript folder and <code>litebox.min.css</code> into your CSS folder.</li>
+            <li>Add the stylesheet into your document's head:
+              <pre><code>&lt;link rel="stylesheet" href="path/to/litebox.min.css"&gt;</code></pre>
             </li>
-            <li>Initialize Litebox by pasting this code into a different script file:<br>
-              <pre>
-                <code>
-                  var box = new Litebox();
-
-                  box.init();
-                </code>
-              </pre></li>
+            <li>Add the script above your closing <code>&lt;/body&gt;</code> tag:
+              <pre><code>&lt;script src="path/to/litebox.min.js" defer&gt;&lt;/script&gt;</code></pre>
+            </li>
+            <li>Below the script from step 4, paste the following code:
+<pre><code>&lt;script&gt;
+  new Litebox(options);
+&lt;/script&gt;</code></pre>
+            </li>
+            <li>In order for Litebox to recognize your images, put the <code>data-litebox</code> attribute on the anchor element, like this:
+<pre><code>&lt;a href="path/to/image.jpg" title="Your awesome image caption" data-litebox&gt;
+  &lt;img src="path/to/preview.jpg" alt="Beautiful image preview"&gt;
+&lt;/a&gt;</code></pre>
+              By passing an object into the constructor, you can change the behavior to whatever you prefer, but if you just want to get started quickly this is the way to go.</li>
+            <li>Enjoy your beautiful images!</li>
           </ol>
         </section>
 
 
         <section class="section">
           <h2 class="heading" id="options">Options</h2>
+
+          <p>You can configure Litebox to your needs and wishes. See all available options below. Just pass an object into the constructor and you're good to go. Still unsure how it's done? See examples.</p>
 
           <table>
             <thead>
@@ -186,21 +188,290 @@
             </thead>
             <tbody>
               <tr>
-                <td><code>animations</code></td>
-                <td>Boolean</td>
-                <td><code>true</code></td>
-                <td>Enables or disables animations.</td>
+                <td>el</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>[data-litebox]</code>
+                </td>
+                <td>The element selector. You can add whatever class, id, tag name or data attribute.</td>
               </tr>
               <tr>
-                <td><code>gallery</code></td>
-                <td>Boolean</td>
-                <td><code>true</code></td>
-                <td>If set to <code>true</code>, Litebox will scroll through all images on the page</td>
+                <td>target</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>href</code>
+                </td>
+                <td>The attribute that refers to the image to display. Can be any other attribute.</td>
+              </tr>
+              <tr>
+                <td>caption</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>title</code>
+                </td>
+                <td>The attribute that defines a caption for each image. Can be any other attribute.</td>
+              </tr>
+              <tr>
+                <td>gallery</td>
+                <td>
+                  <code>Boolean</code>
+                </td>
+                <td>
+                  <code>true</code>
+                </td>
+                <td>Whether to make a gallery (switching the image using the "Next" or "Previous" buttons) or display only a single image.</td>
+              </tr>
+              <tr>
+                <td>keyboardShortcuts</td>
+                <td>
+                  <code>Boolean</code>
+                </td>
+                <td>
+                  <code>true</code>
+                </td>
+                <td>If enabled, you can close Litebox using ESC and use the arrow keys to switch images.</td>
+              </tr>
+              <tr>
+                <td>touch</td>
+                <td>
+                  <code>Boolean</code>
+                </td>
+                <td>
+                  <code>true</code>
+                </td>
+                <td>If enabled, touch gestures will be recognized (swipe left/right to switch images and swipe down to close Litebox).</td>
+              </tr>
+              <tr>
+                <td>autohideControls</td>
+                <td>
+                  <code>Boolean</code>
+                </td>
+                <td>
+                  <code>true</code>
+                </td>
+                <td>If enabled, the control buttons and caption are hidden after 2.5 seconds if the mouse is not moved.</td>
+              </tr>
+              <tr>
+                <td>loop</td>
+                <td>
+                  <code>Boolean</code>
+                </td>
+                <td>
+                  <code>false</code>
+                </td>
+                <td>Whether to display the first image once the end of the gallery has been reached and vice-versa.</td>
+              </tr>
+              <tr>
+                <td>slidehow</td>
+                <td>
+                  <code>Boolean</code>,
+                  <code>Number</code>
+                </td>
+                <td>
+                  <code>false</code>
+                </td>
+                <td>If enabled, Litebox will display a slideshow. Instead of
+                  <code>true</code>, enter the number of milliseconds you want to pass between each image change (like
+                  <code>5000</code> for 5s).</td>
+              </tr>
+              <tr>
+                <td>animation</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>swipe</code>
+                </td>
+                <td>The type of animations you wish to use. Available are
+                  <code>swipe</code>,
+                  <code>fade</code>,
+                  <code>zoom</code> and
+                  <code>none</code>.</td>
+              </tr>
+              <tr>
+                <td>labels</td>
+                <td>
+                  <code>Object</code>
+                </td>
+                <td></td>
+                <td>You can pass an object with custom labels for the buttons. See
+                  <a href="#labels">here</a>.</td>
+              </tr>
+              <tr>
+                <td>classNames</td>
+                <td>
+                  <code>Object</code>
+                </td>
+                <td></td>
+                <td>You can change all names of the CSS classes if you wish to customize your CSS. See
+                  <a href="#class-names">here</a>.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Labels</h3>
+
+          <p>You can override the titles for each button, for example if you want to change the language. Pass an object with one or more of the following attributes into the labels key:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>close</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>Close Litebox</td>
+                <td>The title for the close button.</td>
+              </tr>
+              <tr>
+                <td>next</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>Next image</td>
+                <td>The title for the "Next image" button.</td>
+              </tr>
+              <tr>
+                <td>prev</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>Previous image</td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Class names</h3>
+
+          <p>If you want to customize your CSS or don't like the BEM approach, you can change all class names to whatever you prefer. Pass an object with one or more of the following attributes into the classNames key:</p>
+        
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Element</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>outer</td>
+                <td>
+                  <code>&lt;div&gt;</code>
+                </td>
+                <td>
+                  <code>litebox-outer</code>
+                </td>
+                <td>The outer wrapper, used for the overlay and to center the inner content.</td>
+              </tr>
+              <tr>
+                <td>inner</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-inner</code>
+                </td>
+                <td>The inner content is used to make the image responsive.</td>
+              </tr>
+              <tr>
+                <td>figure</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-image-wrapper</code>
+                </td>
+                <td>The
+                  <code>&lt;figure&gt;</code>
+                </td>
+              </tr>
+              <tr>
+                <td>caption</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-image-caption</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+              <tr>
+                <td>image</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-image</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+              <tr>
+                <td>buttonGeneral</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-button</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+              <tr>
+                <td>buttonClose</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-button-close</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+              <tr>
+                <td>buttonPrev</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-button-prev</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
+              </tr>
+              <tr>
+                <td>buttonNext</td>
+                <td>
+                  <code>String</code>
+                </td>
+                <td>
+                  <code>litebox-button-next</code>
+                </td>
+                <td>The title for the "Previous image" button.</td>
               </tr>
             </tbody>
           </table>
         </section>
       </main>
+      <footer class="main-footer center">
+        <p>Copyright &copy; 2018 by <a href="https://andreasremdt.com" target="_blank" rel="noopener" class="link">Andreas Remdt</a>.<br>Made with &hearts;</p>
+      </footer>
     </div>
+
+    <script src="js/litebox.min.js"></script>
+    <script src="js/scripts.js"></script>
   </body>
 </html>
