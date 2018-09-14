@@ -1,6 +1,6 @@
 {
   "name": "litebox",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Simple and dependency-free vanilla lightbox",
   "main": "src/js/litebox.js",
   "keywords": [

@@ -1,0 +1,11 @@
+/*
+ * FOOTER
+ * ----------------------------------------- */
+.main-footer {
+  padding: 2rem 0;
+  color: white;
+}
+
+.main-footer .link {
+  border-bottom: 1px solid var(--border-color);
+}

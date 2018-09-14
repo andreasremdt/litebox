@@ -1,0 +1,60 @@
+.litebox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: rgba(0, 0, 0, .5);
+
+  .hidden {
+    display: none;
+  }
+}
+
+.litebox__inner {
+  max-width: 90vw;
+  max-height: 90vh;
+  
+  position: relative;
+}
+
+.litebox__image__wrapper {
+  margin: 0;
+  position: relative;
+  
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, .3);
+}
+
+.litebox__image {
+  max-width: 90vw;
+  max-height: 80vh;
+
+  vertical-align: middle;
+}
+
+.litebox__caption {
+  position: absolute;
+  bottom: -($button-width / 2);
+  left: ($button-width / 2);
+  right: ($button-width / 2);
+  padding: 1rem 2rem;
+  box-sizing: border-box;
+
+  line-height: 1.5;
+
+  color: $text-color;
+  background-color: white;
+
+  border-radius: $button-radius;
+
+  transition: opacity .2s ease-in-out;
+
+  &.-hidden {
+    display: none;
+  }
+}

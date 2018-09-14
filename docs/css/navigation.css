@@ -1,0 +1,48 @@
+/*
+ * NAVIGATION
+ * ----------------------------------------- */
+#main-navigation {
+  padding: 1rem 5rem;
+  position: sticky;
+  top: 0;
+  
+  background-color: var(--light-gray);
+
+  border-radius: .4rem .4rem 0 0;
+
+  text-align: center;
+
+  z-index: 9;
+}
+
+#main-navigation > .link {
+  display: inline-block;
+  padding: .6rem 2rem;
+  margin: 0 .5rem;
+
+  border-radius: .3rem;
+
+  transition: background-color 100ms linear;
+}
+
+#main-navigation > .link:hover,
+#main-navigation > .link:focus {
+  background-color: hsla(0, 0%, 0%, .06);
+}
+
+#main-navigation > .is-active {
+  background-image: linear-gradient(to left bottom, var(--light-purple), var(--red));
+  color: white;
+}
+
+@media (max-width: 1100px) {
+  #main-navigation {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  #main-navigation {
+    border-radius: 0;
+  }
+}

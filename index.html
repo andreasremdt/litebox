@@ -9,28 +9,38 @@
 
     <link rel="stylesheet" href="dist/css/litebox.min.css">
   </head>
-  <body>
+  <body style="height: 3000px">
 
-    <a href="https://images.unsplash.com/photo-1508616987956-0cdacd91ac2f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=401e531bcb93d5f6712d91e77cfd4997&auto=format&fit=crop&w=700&q=80" title="This is image 1" data-litebox data-href="https://source.unsplash.com/random/1280x600">
+    <a href="https://images.unsplash.com/photo-1508616987956-0cdacd91ac2f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=401e531bcb93d5f6712d91e77cfd4997&auto=format&fit=crop&w=700&q=95" title="This is image 1" data-gallery="tset" data-litebox data-href="https://source.unsplash.com/random/1280x600">
       <img width="200" height="200" src="https://images.unsplash.com/photo-1508616987956-0cdacd91ac2f?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=401e531bcb93d5f6712d91e77cfd4997&auto=format&fit=crop&w=700&q=80" alt="Testing">
     </a>
-    <a href="https://images.unsplash.com/photo-1511993226957-cd166aba52d8?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a464b0ccb46ebad0a3763974158a8cc5&auto=format&fit=crop&w=643&q=80" title="Another title" data-litebox>
+    <a href="https://images.unsplash.com/photo-1511993226957-cd166aba52d8?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a464b0ccb46ebad0a3763974158a8cc5&auto=format&fit=crop&w=643&q=95" title="Another title" data-gallery="tset" data-litebox>
       <img width="200" height="200" src="https://images.unsplash.com/photo-1511993226957-cd166aba52d8?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a464b0ccb46ebad0a3763974158a8cc5&auto=format&fit=crop&w=643&q=80" alt="Testing">
     </a>
-    <a href="https://images.unsplash.com/photo-1519456420145-4774378b086a?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a576b6ce681a930248f37039c3b0aae0&auto=format&fit=crop&w=635&q=80" data-litebox>
+    <a href="https://images.unsplash.com/photo-1519456420145-4774378b086a?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a576b6ce681a930248f37039c3b0aae0&auto=format&fit=crop&w=635&q=80" data-gallery="4" data-litebox>
       <img width="200" height="200" src="https://images.unsplash.com/photo-1519456420145-4774378b086a?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a576b6ce681a930248f37039c3b0aae0&auto=format&fit=crop&w=635&q=80" alt="Testing">
     </a>
-    <a href="https://images.unsplash.com/photo-1519678142103-c78ae3983171?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=11160def9bf74a12fe883ae9d19036aa&auto=format&fit=crop&w=1050&q=80" title="title 4" data-litebox>
+    <a href="https://images.unsplash.com/photo-1519678142103-c78ae3983171?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=11160def9bf74a12fe883ae9d19036aa&auto=format&fit=crop&w=1050&q=80" data-gallery="4" title="title 4" data-litebox>
       <img width="200" height="200" src="https://images.unsplash.com/photo-1519678142103-c78ae3983171?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=11160def9bf74a12fe883ae9d19036aa&auto=format&fit=crop&w=1050&q=80" alt="Testing">
     </a>
 
+    <!--<div class="litebox">
+      <div class="litebox__loader">Loading...</div>
+      <div class="litebox__error">Sorry, the image couldn't be loaded.</div>
+      <div class="litebox__inner">
+        <button class="litebox__button litebox__button--close">Close Lightbox</button>
+        <!--<button class="litebox__button litebox__button--prev">Show previous image</button>
+        <button class="litebox__button litebox__button--next">Show next image</button>
+        <figure class="litebox__image__wrapper">
+          <img class="litebox__image" src="https://images.unsplash.com/photo-1519678142103-c78ae3983171?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=11160def9bf74a12fe883ae9d19036aa&auto=format&fit=crop&w=1050&q=80">
+          <figcaption class="litebox__caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto consequatur voluptatem quos, consequuntur placeat aliquam nihil adipisci quis nobis corporis eius reiciendis, accusamus quam totam. Cumque, quae. Ipsa, esse aperiam.</figcaption>
+        </figure>
+      </div>
+    </div>-->
     
     <script src="src/js/litebox.js"></script>
     <script>
-      new Litebox({
-        el: '[data-litebox]',
-        gallery: false
-      });
+      new Litebox();
     </script>
   </body>
 </html>

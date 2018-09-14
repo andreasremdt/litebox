@@ -1,0 +1,40 @@
+/*
+ * FEATURES
+ * ----------------------------------------- */
+.feature {
+  box-sizing: border-box;
+  flex-basis: 33.3333%;
+  padding: 3rem 2rem 0 2rem;
+}
+
+.feature > .icon {
+  display: inline-block;
+  position: relative;
+}
+
+.feature > .icon::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom right, var(--light-purple) 5%, var(--red));
+  content: '';
+  mix-blend-mode: screen;
+}
+
+.feature > .title {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .feature {
+    flex-basis: 50%;
+  } 
+}
+
+@media (max-width: 700px) {
+  .feature {
+    flex-basis: 100%;
+  }
+}

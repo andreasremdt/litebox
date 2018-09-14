@@ -9,171 +9,200 @@
 
     <title>Litebox - Lightweight and dependency-free JavaScript Lightbox</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/prism.css">
     <link rel="stylesheet" href="css/litebox.min.css">
   </head>
   <body>
     <div class="container">
-      <header class="main-header">
-        <span class="logo" role="img">
-          <svg width="40" height="40" viewBox="0 0 20 20">
-            <path fill="currentColor" d="M17.125 6.17l-2.046-5.635c-0.151-0.416-0.595-0.637-0.989-0.492l-13.598 4.963c-0.394 0.144-0.593 0.597-0.441 1.013l2.156 5.941v-3.183c0-1.438 1.148-2.607 2.56-2.607h3.593l4.285-3.008 2.479 3.008h2.001zM19.238 8h-14.471c-0.42 0-0.762 0.334-0.762 0.777v9.42c0.001 0.444 0.343 0.803 0.762 0.803h14.471c0.42 0 0.762-0.359 0.762-0.803v-9.42c0-0.443-0.342-0.777-0.762-0.777zM18 17h-12v-2l1.984-4.018 2.768 3.436 2.598-2.662 3.338-1.205 1.312 3.449v3z"></path>
+      <link rel="stylesheet" href="css/header.css">
+      <header id="main-header">
+        <span id="logo">
+          <svg width="40" height="40">
+            <use xlink:href="symbol-defs.svg#image"></use>
           </svg>
         </span>
-        <h1 class="title">Litebox</h1>
-        <p class="description">Simple, modern and lightweight vanilla JS lightbox to showcase your images.</p>
-        <p>
-          <a href="#" class="button">
-            <svg class="icon" width="20" height="20" viewBox="0 0 20 20">
-              <path fill="currentColor" d="M15 7h-3v-6h-4v6h-3l5 5 5-5zM19.338 13.532c-0.21-0.224-1.611-1.723-2.011-2.114-0.265-0.259-0.644-0.418-1.042-0.418h-1.757l3.064 2.994h-3.544c-0.102 0-0.194 0.052-0.24 0.133l-0.816 1.873h-5.984l-0.816-1.873c-0.046-0.081-0.139-0.133-0.24-0.133h-3.544l3.063-2.994h-1.756c-0.397 0-0.776 0.159-1.042 0.418-0.4 0.392-1.801 1.891-2.011 2.114-0.489 0.521-0.758 0.936-0.63 1.449l0.561 3.074c0.128 0.514 0.691 0.936 1.252 0.936h16.312c0.561 0 1.124-0.422 1.252-0.936l0.561-3.074c0.126-0.513-0.142-0.928-0.632-1.449z"></path>
-            </svg> Download
-          </a>
-          <a href="https://github.com/andreasremdt/litebox" class="button" target="_blank" rel="noopener">
-            <svg class="icon" width="20" height="20" viewBox="0 0 20 20">
-              <path fill="currentColor" d="M13.18 11.309c-0.718 0-1.3 0.807-1.3 1.799 0 0.994 0.582 1.801 1.3 1.801s1.3-0.807 1.3-1.801c-0.001-0.992-0.582-1.799-1.3-1.799zM17.706 6.626c0.149-0.365 0.155-2.439-0.635-4.426 0 0-1.811 0.199-4.551 2.080-0.575-0.16-1.548-0.238-2.519-0.238-0.973 0-1.945 0.078-2.52 0.238-2.741-1.881-4.552-2.080-4.552-2.080-0.789 1.987-0.781 4.061-0.634 4.426-0.928 1.008-1.495 2.219-1.495 3.871 0 7.186 5.963 7.301 7.467 7.301 0.342 0 1.018 0.002 1.734 0.002s1.392-0.002 1.732-0.002c1.506 0 7.467-0.115 7.467-7.301 0-1.652-0.566-2.863-1.494-3.871zM10.028 16.915h-0.056c-3.771 0-6.709-0.449-6.709-4.115 0-0.879 0.31-1.693 1.047-2.369 1.227-1.127 3.305-0.531 5.662-0.531 0.010 0 0.020 0 0.029 0s0.018 0 0.027 0c2.357 0 4.436-0.596 5.664 0.531 0.735 0.676 1.045 1.49 1.045 2.369 0 3.666-2.937 4.115-6.709 4.115zM6.821 11.309c-0.718 0-1.3 0.807-1.3 1.799 0 0.994 0.582 1.801 1.3 1.801s1.301-0.807 1.301-1.801c0-0.992-0.582-1.799-1.301-1.799z"></path>
-            </svg> View on GitHub
-          </a>
-        </p>
+
+        <h1 id="title">Litebox</h1>
+        <p id="subtitle">Simple, modern and lightweight lightbox to showcase your images.</p>
+
+        <a href="#" class="button" data-particle>
+          <svg class="icon" width="20" height="20" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M21 14c-0.6 0-1 0.4-1 1v4c0 0.6-0.4 1-1 1h-14c-0.6 0-1-0.4-1-1v-4c0-0.6-0.4-1-1-1s-1 0.4-1 1v4c0 1.7 1.3 3 3 3h14c1.7 0 3-1.3 3-3v-4c0-0.6-0.4-1-1-1z"></path>
+            <path fill="currentColor" d="M11.3 15.7c0.1 0.1 0.2 0.2 0.3 0.2 0.1 0.1 0.3 0.1 0.4 0.1s0.3 0 0.4-0.1c0.1-0.1 0.2-0.1 0.3-0.2l5-5c0.4-0.4 0.4-1 0-1.4s-1-0.4-1.4 0l-3.3 3.3v-9.6c0-0.6-0.4-1-1-1s-1 0.4-1 1v9.6l-3.3-3.3c-0.4-0.4-1-0.4-1.4 0s-0.4 1 0 1.4l5 5z"></path>
+          </svg> Download
+        </a>
+
+        <a href="https://github.com/andreasremdt/litebox" class="button" target="_blank" rel="noopener">
+          <svg class="icon" width="20" height="20" viewBox="0 0 20 20">
+            <path fill="currentColor" d="M13.18 11.309c-0.718 0-1.3 0.807-1.3 1.799 0 0.994 0.582 1.801 1.3 1.801s1.3-0.807 1.3-1.801c-0.001-0.992-0.582-1.799-1.3-1.799zM17.706 6.626c0.149-0.365 0.155-2.439-0.635-4.426 0 0-1.811 0.199-4.551 2.080-0.575-0.16-1.548-0.238-2.519-0.238-0.973 0-1.945 0.078-2.52 0.238-2.741-1.881-4.552-2.080-4.552-2.080-0.789 1.987-0.781 4.061-0.634 4.426-0.928 1.008-1.495 2.219-1.495 3.871 0 7.186 5.963 7.301 7.467 7.301 0.342 0 1.018 0.002 1.734 0.002s1.392-0.002 1.732-0.002c1.506 0 7.467-0.115 7.467-7.301 0-1.652-0.566-2.863-1.494-3.871zM10.028 16.915h-0.056c-3.771 0-6.709-0.449-6.709-4.115 0-0.879 0.31-1.693 1.047-2.369 1.227-1.127 3.305-0.531 5.662-0.531 0.010 0 0.020 0 0.029 0s0.018 0 0.027 0c2.357 0 4.436-0.596 5.664 0.531 0.735 0.676 1.045 1.49 1.045 2.369 0 3.666-2.937 4.115-6.709 4.115zM6.821 11.309c-0.718 0-1.3 0.807-1.3 1.799 0 0.994 0.582 1.801 1.3 1.801s1.301-0.807 1.301-1.801c0-0.992-0.582-1.799-1.301-1.799z"></path>
+          </svg> View on GitHub
+        </a>
       </header>
 
-      <main class="main-content">
-        <nav class="main-navigation">
-          <a href="#intro" class="link -active" data-link>Introduction</a>
-          <a href="#examples" class="link" data-link>Examples</a>
-          <a href="#getting-started" class="link" data-link>Getting started</a>
+
+      <link rel="stylesheet" href="css/content.css">
+      <main id="main-content">
+
+        <link rel="stylesheet" href="css/navigation.css">
+        <nav id="main-navigation">
+          <a href="#intro" class="link" data-link>Introduction</a>
+          <a href="#demos" class="link" data-link>Demos</a>
+          <a href="#usage" class="link" data-link>Usage</a>
           <a href="#options" class="link" data-link>Options</a>
         </nav>
 
-        <section class="section">
-          <h2 id="intro" class="heading">Introduction</h2>
+        <link rel="stylesheet" href="css/intro.css">
+        <section class="section" id="intro" data-section>
+          <h2 class="heading">Introduction</h2>
 
-          <div class="row">
+          <div class="row center">
             <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="Litebox doesn't rely on any external scripts like jQuery">
-                  <path fill="currentColor" d="M7.859 14.691l-0.81 0.805c-0.701 0.695-1.843 0.695-2.545 0-0.336-0.334-0.521-0.779-0.521-1.252s0.186-0.916 0.521-1.252l2.98-2.955c0.617-0.613 1.779-1.515 2.626-0.675 0.389 0.386 1.016 0.384 1.403-0.005 0.385-0.389 0.383-1.017-0.006-1.402-1.438-1.428-3.566-1.164-5.419 0.675l-2.98 2.956c-0.715 0.709-1.108 1.654-1.108 2.658 0 1.006 0.394 1.949 1.108 2.658 0.736 0.73 1.702 1.096 2.669 1.096s1.934-0.365 2.669-1.096l0.811-0.805c0.389-0.385 0.391-1.012 0.005-1.4s-1.014-0.39-1.403-0.006zM16.891 3.207c-1.547-1.534-3.709-1.617-5.139-0.197l-1.009 1.002c-0.389 0.386-0.392 1.013-0.006 1.401 0.386 0.389 1.013 0.391 1.402 0.005l1.010-1.001c0.74-0.736 1.711-0.431 2.346 0.197 0.336 0.335 0.522 0.779 0.522 1.252s-0.186 0.917-0.522 1.251l-3.18 3.154c-1.454 1.441-2.136 0.766-2.427 0.477-0.389-0.386-1.016-0.383-1.401 0.005s-0.384 1.017 0.005 1.401c0.668 0.662 1.43 0.99 2.228 0.99 0.977 0 2.010-0.492 2.993-1.467l3.18-3.153c0.712-0.71 1.107-1.654 1.107-2.658s-0.395-1.949-1.109-2.659z"></path>
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#free"></use>
                 </svg>
               </span>
-              <h3 class="title">Dependency-free</h3>
+              <h3 class="title">No dependencies</h3>
               <p>Litebox doesn't depend on any third-party scripts like jQuery or lodash. Include one script and you're good to go.</p>
             </article>
             <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="Litebox weights less than 10 kilobytes">
-                  <path fill="currentColor" d="M4.254 19.567c0.307-0.982 0.77-2.364 1.391-4.362 2.707-0.429 3.827 0.341 5.546-2.729-1.395 0.427-3.077-0.792-2.987-1.321s3.913 0.381 6.416-3.173c-3.155 0.696-4.164-0.836-3.757-1.067 0.939-0.534 3.726-0.222 5.212-1.669 0.766-0.745 1.125-2.556 0.813-3.202-0.374-0.781-2.656-1.946-3.914-1.836s-3.231 4.79-3.817 4.754c-0.584-0.037-0.703-2.098 0.319-4.013-1.077 0.477-3.051 1.959-3.67 3.226-1.153 2.357 0.108 7.766-0.296 7.958s-1.766-2.481-2.172-3.694c-0.555 1.859-0.568 3.721 1.053 6.194-0.611 1.623-0.945 3.491-0.996 4.441-0.024 0.759 0.724 0.922 0.859 0.493z"></path>
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#quill"></use>
                 </svg>
               </span>
               <h3 class="title">Lightweight</h3>
               <p>Compressed and minified, the script only weights around 10 KB, which makes it load quickly into your website.</p>
             </article>
             <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="You can change every style and option like you want">
-                  <path fill="currentColor" d="M5 1.6c0-0.553-0.448-0.6-1-0.6-0.553 0-1 0.047-1 0.6v8.4h2v-8.4zM3 18.4c0 0.551 0.447 0.6 1 0.6 0.552 0 1-0.049 1-0.6v-3.4h-2v3.4zM6.399 11h-4.8c-0.553 0-0.599 0.448-0.599 1v1c0 0.553 0.046 1 0.599 1h4.801c0.55 0 0.6-0.447 0.6-1v-1c0-0.552-0.050-1-0.601-1zM18.399 12h-4.801c-0.552 0-0.598 0.448-0.598 1v1c0 0.553 0.046 1 0.599 1h4.801c0.55 0 0.6-0.447 0.6-1v-1c0-0.552-0.050-1-0.601-1zM13 7c0-0.552-0.050-1-0.601-1h-4.8c-0.553 0-0.599 0.448-0.599 1v1c0 0.553 0.046 1 0.599 1h4.801c0.55 0 0.6-0.447 0.6-1v-1zM11 1.6c0-0.553-0.448-0.6-1-0.6-0.553 0-1 0.047-1 0.6v3.4h2v-3.4zM9 18.4c0 0.551 0.447 0.6 1 0.6 0.552 0 1-0.049 1-0.6v-8.4h-2v8.4zM17 1.6c0-0.553-0.448-0.6-1-0.6-0.553 0-1 0.047-1 0.6v9.4h2v-9.4zM15 18.4c0 0.551 0.447 0.6 1 0.6 0.552 0 1-0.049 1-0.6v-2.4h-2v2.4z"></path>
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#settings"></use>
                 </svg>
               </span>
               <h3 class="title">Customizable</h3>
-              <p>You can customize the behaviour, such as the animations, selectors or translations. It adapts to your needs.</p>
+              <p>You can customize the behaviour and look with various options, so it adapts to your needs.</p>
             </article>
             <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="Litebox uses a modern ES6 codebase">
-                  <path fill="currentColor" d="M6.803 18.998c-0.194-0.127 3.153-7.16 3.038-7.469s-3.665-1.436-3.838-1.979c-0.174-0.543 7.007-8.707 7.196-8.549s-3.129 7.238-3.039 7.469c0.091 0.23 3.728 1.404 3.838 1.979s-7.002 8.676-7.195 8.549z"></path>
-                </svg>
-              </span>
-              <h3 class="title">Modern</h3>
-              <p>Litebox is built using the latest version of EcmaScript and offers quiet readable and beautiful code.</p>
-            </article>
-            <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="Use Litebox in Internet Explorer, Edge, Chrome, Firefox and others">
-                  <path fill="currentColor" d="M18 1h-16c-1.101 0-2 0.9-2 2v11c0 1.1 0.882 2.178 1.961 2.393l4.372 0.875c0 0-3.763 1.732-1.333 1.732h10c2.43 0-1.334-1.732-1.334-1.732l4.373-0.875c1.078-0.215 1.961-1.293 1.961-2.393v-11c0-1.1-0.9-2-2-2zM18 14h-16v-11h16v11z"></path>
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#browser"></use>
                 </svg>
               </span>
               <h3 class="title">Cross-browser support</h3>
-              <p>Being compiled into ES5 using Babel, Litebox is backwards-compatible to Internet Explorer 10 and other browsers.</p>
+              <p>Being compiled into ES5 using Babel, Litebox is working in all modern browsers.</p>
             </article>
             <article class="feature">
-              <span class="image" role="img">
-                <svg width="40" height="40" viewBox="0 0 20 20" title="Use the default styles or change them as you wish">
-                  <path fill="currentColor" d="M17.538 2.639c0.394-0.545 0.462-1.639 0.462-1.639h-16c0 0 0.068 1.094 0.462 1.639l6.538 8.361v6h-2c-2 0-2 2-2 2h10c0 0 0-2-2-2h-2v-6l6.538-8.361zM9.4 6c0-0.885 0.716-1.6 1.6-1.6s1.6 0.715 1.6 1.6c0 0.883-0.716 1.6-1.6 1.6s-1.6-0.717-1.6-1.6z"></path>
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#easy"></use>
                 </svg>
               </span>
-              <h3 class="title">Sexy</h3>
-              <p>Although including a simple, yet nice looking default theme, you can customize any CSS to your needs and CI.</p>
+              <h3 class="title">Easy installation</h3>
+              <p>In a hurry? Just throw the script at your HTML and use the default options and styling.</p>
+            </article>
+            <article class="feature">
+              <span class="icon">
+                <svg width="60" height="60">
+                  <use xlink:href="symbol-defs.svg#open-source"></use>
+                </svg>
+              </span>
+              <h3 class="title">Free & Open Source</h3>
+              <p>Litebox is completely free and will always be. Its source code is also available on GitHub.</p>
             </article>
           </div>
         </section>
 
 
 
-        <section class="section">
-          <h2 class="heading" id="examples">Examples</h2>
+        <link rel="stylesheet" href="css/gallery.css">
+        <section class="section" id="demos" data-section>
+          <h2 class="heading">Demos</h2>
+          <p class="center">Click either of the below images to see Litebox in action. The first three images are individual, which means that you only can open them one by one. The last three images are part of a gallery, so you can click through them without closing Litebox.</p>
 
           <figure class="image-gallery">
-            <figcaption class="caption">
+            <figcaption class="caption center">
               <h3>Three individual images</h3>
             </figcaption>
-            <a class="overlay" href="images/examples/areal-landscape.jpg" data-litebox>
-              <img src="images/examples/previews/areal-landscape.jpg" class="image" alt="Areal landscape" width="500" height="281">
+            <a class="image" href="images/examples/areal-landscape.jpg" data-litebox>
+              <img src="images/examples/previews/areal-landscape.jpg" alt="Areal landscape" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/cascade-ice-island.jpg" data-litebox>
-              <img src="images/examples/previews/cascade-ice-island.jpg" class="image" alt=" Cascade in cce island" width="500" height="281">
+            <a class="image" href="images/examples/cascade-ice-island.jpg" data-litebox>
+              <img src="images/examples/previews/cascade-ice-island.jpg" alt=" Cascade in ice island" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/clouds-dawn-dusk.jpg" data-litebox>
-              <img src="images/examples/previews/clouds-dawn-dusk.jpg" class="image" alt="Clouds in dawn / dusk" width="500" height="281">
+            <a class="image" href="images/examples/clouds-dawn-dusk.jpg" data-litebox>
+              <img src="images/examples/previews/clouds-dawn-dusk.jpg" alt="Clouds in dawn / dusk" width="500" height="281">
             </a>
           </figure>
 
           <figure class="image-gallery">
-            <figcaption class="caption">
+            <figcaption class="caption center">
               <h3>Three images as part of a gallery</h3>
             </figcaption>
-            <a class="overlay" href="images/examples/mountains-dusk.jpg" data-litebox>
-              <img src="images/examples/previews/mountains-dusk.jpg" class="image" alt="Mountains in dusk" width="500" height="281">
+            <a class="image" href="images/examples/mountains-dusk.jpg" data-litebox>
+              <img src="images/examples/previews/mountains-dusk.jpg" alt="Mountains in dusk" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/mountains-forest.jpg" data-litebox>
-              <img src="images/examples/previews/mountains-forest.jpg" class="image" alt="Forest with mountains" width="500" height="281">
+            <a class="image" href="images/examples/mountains-forest.jpg" data-litebox>
+              <img src="images/examples/previews/mountains-forest.jpg" alt="Forest with mountains" width="500" height="281">
             </a>
-            <a class="overlay" href="images/examples/snowy-road-mountains.jpg" data-litebox>
-              <img src="images/examples/previews/snowy-road-mountains.jpg" class="image" alt="Snowy road with mountains" width="500" height="281">
+            <a class="image" href="images/examples/snowy-road-mountains.jpg" data-litebox>
+              <img src="images/examples/previews/snowy-road-mountains.jpg" alt="Snowy road with mountains" width="500" height="281">
             </a>
           </figure>
         </section>
 
 
 
-        <section class="section">
-          <h2 class="heading" id="getting-started">Getting started</h2>
+        <section class="section" id="usage" data-section>
+          <h2 class="heading">Usage</h2>
 
           <ol>
-            <li>Download the latest release of Litebox from this repository to your computer.</li>
+            <li>Download the <a href="#">latest release</a> of Litebox from this repository to your computer.</li>
             <li>Extract the ZIP-file. Copy <code>litebox.min.js</code> into your JavaScript folder and <code>litebox.min.css</code> into your CSS folder.</li>
             <li>Add the stylesheet into your document's head:
-              <pre><code>&lt;link rel="stylesheet" href="path/to/litebox.min.css"&gt;</code></pre>
+              <pre><code class="language-html">&lt;link rel="stylesheet" href="css/litebox.min.css"&gt;</code></pre>
             </li>
             <li>Add the script above your closing <code>&lt;/body&gt;</code> tag:
-              <pre><code>&lt;script src="path/to/litebox.min.js" defer&gt;&lt;/script&gt;</code></pre>
+              <pre><code class="language-html">&lt;script src="js/litebox.min.js" defer&gt;&lt;/script&gt;</code></pre>
             </li>
-            <li>Below the script from step 4, paste the following code:
-<pre><code>&lt;script&gt;
-  new Litebox(options);
+            <li>Below the script from step 4, paste the following code (can be included into an external script too, of course):
+<pre><code class="language-html">&lt;script&gt;
+  // Default options
+  new Litebox();
+
+  // With custom options
+  new Litebox({
+    el: '.litebox',
+    animations: false
+  });
 &lt;/script&gt;</code></pre>
+              By passing an object into the constructor, you can change the behavior to whatever you prefer, but if you just want to get started quickly this is the way to go. Read more about <a href="#options">configuring Litebox.</a>
             </li>
             <li>In order for Litebox to recognize your images, put the <code>data-litebox</code> attribute on the anchor element, like this:
-<pre><code>&lt;a href="path/to/image.jpg" title="Your awesome image caption" data-litebox&gt;
-  &lt;img src="path/to/preview.jpg" alt="Beautiful image preview"&gt;
-&lt;/a&gt;</code></pre>
-              By passing an object into the constructor, you can change the behavior to whatever you prefer, but if you just want to get started quickly this is the way to go.</li>
+<pre><code class="language-html">&lt;!-- for single images --&gt;
+&lt;a href="images/forest-dawn.jpg" data-litebox title="This picture was taken at dawn when I came across a beautiful forest."&gt;
+  &lt;img src="images/previews/forest-dawn.jpg" alt="Forest at dawn" width="500" height="320"&gt;
+&lt;/a&gt;
+
+&lt;!-- for galleries --&gt;
+&lt;a href="images/waterfall-iceland.jpg" data-litebox data-gallery="waterfalls" title="A picture of one of the biggest waterfall in Iceland, Seljalandsfoss."&gt;
+  &lt;img src="images/previews/waterfall-iceland.jpg" alt="Waterfall in Iceland" width="500" height="320"&gt;
+&lt;/a&gt;
+&lt;a href="images/waterfall-iceland-south.jpg" data-litebox data-gallery="waterfalls" title="The Skógafoss waterfall in the south of Iceland."&gt;
+  &lt;img src="images/previews/waterfall-iceland-south.jpg" alt="Waterfall in the south of Iceland" width="500" height="320"&gt;
+&lt;/a&gt;
+</code></pre>
+              Note the <code>data-gallery="litebox"</code> in the example. Put this piece of code on every image that you want to include into a gallery. The value inside of <code>data-gallery</code> can be whatever you like.</li>
             <li>Enjoy your beautiful images!</li>
           </ol>
         </section>
 
 
-        <section class="section">
-          <h2 class="heading" id="options">Options</h2>
+
+        <section class="section" id="options" data-section>
+          <h2 class="heading">Options</h2>
 
           <p>You can configure Litebox to your needs and wishes. See all available options below. Just pass an object into the constructor and you're good to go. Still unsure how it's done? See examples.</p>
 
@@ -466,12 +495,15 @@
           </table>
         </section>
       </main>
+
+      <link rel="stylesheet" href="css/footer.css">
       <footer class="main-footer center">
-        <p>Copyright &copy; 2018 by <a href="https://andreasremdt.com" target="_blank" rel="noopener" class="link">Andreas Remdt</a>.<br>Made with &hearts;</p>
+        <p>Copyright &copy; 2018 by <a href="https://andreasremdt.com" target="_blank" rel="noopener" class="link">Andreas Remdt</a>.<br>Licensed under the MIT license.</p>
       </footer>
     </div>
 
-    <script src="js/litebox.min.js"></script>
-    <script src="js/scripts.js"></script>
+    <script src="js/litebox.min.js" defer></script>
+    <script src="js/prism.min.js" defer></script>
+    <script src="js/scripts.js" defer></script>
   </body>
 </html>
