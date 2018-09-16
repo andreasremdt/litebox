@@ -10,11 +10,16 @@
     "image"
   ],
   "scripts": {
-    "lint:js": "eslint src/js/litebox.js"
+    "lint:js": "eslint src/js/litebox.js",
+    "build:js": "babel src/js/litebox.js --out-file dist/js/litebox.min.js --source-maps --compact",
+    "compile:js": "babel src/js/litebox.js --out-file dist/js/litebox.js"
   },
   "author": "Andreas Remdt",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
     "eslint": "^5.6.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
