@@ -3,6 +3,7 @@
  * 
  * Copyright (c) 2018 by Andreas Remdt
  */
+
 class Litebox {
   constructor(options) {
     // Assign options and throw an error if the given object is invalid
@@ -41,8 +42,6 @@ class Litebox {
     this._registerKeyboardEvents();
     this._registerMouseEvents();
     this._registerTouchEvents();
-    
-    /*this.slideshow();*/
   }
 
 
@@ -110,10 +109,6 @@ class Litebox {
   }
 
   
-
-  
-
-
 
   /**
    * If the users has enabled keyboard events, this method registers
@@ -226,24 +221,6 @@ class Litebox {
 
 
 
-  /*slideshow() {
-    if (!this.options.slideshow) {
-      return;
-    }
-
-    if (isNaN(parseInt(this.options.slideshow))) {
-      console.warn(`(Litebox): Received an invalid number for the slideshow timing. '${this.options.slideshow}' is not a number.`);
-      
-      return;
-    }
-
-    this._interval = setInterval(() => {
-      this.next();
-    }, this.options.slideshow);
-  }*/
-
-
-
   _show(image) {
     if (!document.body.contains(this._LITEBOX)) {
       document.body.appendChild(this._LITEBOX);
@@ -343,14 +320,6 @@ class Litebox {
 
 
 
-  
-
-
-
-
-  
-
-
   /**
    * Displays the next image in the gallery. If there is no more
    * image, it returns the function.
@@ -359,39 +328,6 @@ class Litebox {
     if (this._getNext()) {
       this._show(this._getNext());      
     }
-    // If there is no next image, don't do anything
-    /*if (this._current === this.elements.length - 1) {
-      if (this.options.loop) {
-        this._current = -1;
-      } else {
-        if (this._interval) {
-          clearInterval(this._interval);
-        }
-
-        return;
-      }
-    }
-
-    // Animate the image out
-    this._outer.classList.add('-hide-image-left');
-
-    // When the image has disappeared through animation, continue
-    // loading the next one
-    this._outer.addEventListener('animationend', (evt) => {
-
-      this._current++;
-
-      this.load(this.elements[this._current]).then(() => {
-        this._outer.classList.remove('-hide-image-left');
-        this._outer.classList.add('-show-image-right');
-
-        this._outer.addEventListener('animationend', (evt) => {
-          if (evt.animationName === 'show-image-right') {
-            this._outer.classList.remove('-show-image-right');
-          }
-        });
-      });
-    }, { once: true });*/
   }
 
 
@@ -404,84 +340,6 @@ class Litebox {
     if (this._getPrev()) {
       this._show(this._getPrev());
     }
-    // If there is no previous image, don't do anything
-    /*if (this._current <= 0) {
-      if (this.options.loop) {
-        this._current = this.elements.length;
-      } else {
-        return;
-      }
-    }
-
-    // Animate the image out
-    this._outer.classList.add('-hide-image-right');
-
-    // When the image has disappeared through animation, continue
-    // loading the next one
-    this._outer.addEventListener('animationend', (evt) => {
-      this._current--;
-
-      this.load(this.elements[this._current]).then(() => {
-        this._outer.classList.remove('-hide-image-right');
-        this._outer.classList.add('-show-image-left');
-
-        this._outer.addEventListener('animationend', (evt) => {
-          if (evt.animationName === 'show-image-left') {
-            this._outer.classList.remove('-show-image-left');
-          }
-        });
-      });
-    }, { once: true });*/
-  }
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-  /**
-   * Removes the `-inactive` class from the litebox wrapper
-   * in order to show the controls. After 500 ms the controls are
-   * automatically hidden.
-   */
-  showControls() {
-    this._outer.classList.remove('-inactive');
-
-    this.timeout = setTimeout(() => {
-      this.hideControls();
-    }, 2000);
-  }
-  
-
-  /**
-   * After 1s, adds the `-inactice` class to the litebox wrapper
-   * in order to hide the controls.
-   */
-  hideControls() {
-    this._outer.classList.add('-inactive');
-  }
-
-
-  /**
-   * Clears the global timeout that automatically hides the controls
-   * after a short time without mouse movement.
-   */
-  clearTimeout() {
-    clearTimeout(this.timeout);
-
-    this.showControls();
   }
 
 
@@ -493,6 +351,33 @@ class Litebox {
    */
   _isHidden() {
     return !document.body.contains(this._LITEBOX);
+  }
+
+
+
+  /**
+  * Shows the loader while an image is loading.
+  */
+  _showLoader() {
+    this._structure.LOADER.classList.remove('hidden');
+  }
+
+
+
+  /**
+   * Hides the loader after an image has been loaded.
+   */
+  _hideLoader() {
+    this._structure.LOADER.classList.add('hidden');
+  }
+
+
+
+  /**
+   * In case an image could not be loaded, shows an error message.
+   */
+  _showError() {
+    this._structure.ERROR.classList.remove('hidden');
   }
 
 
@@ -561,7 +446,6 @@ class Litebox {
     return gallery[i - 1];
   }
   
-
 
 
   /**
@@ -674,17 +558,5 @@ class Litebox {
     });
 
     return output;
-  }
-
-  _showLoader() {
-    this._structure.LOADER.classList.remove('hidden');
-  }
-
-  _hideLoader() {
-    this._structure.LOADER.classList.add('hidden');
-  }
-
-  _showError() {
-    this._structure.ERROR.classList.remove('hidden');
   }
 }
