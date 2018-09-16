@@ -156,8 +156,8 @@ class Litebox {
     }
 
     // Initialize touch coordinates
-    let xDown = null,
-        yDown = null;
+    var xDown = null;
+    var yDown = null;
 
     // Captures the coordinates of the finger on touchstart.
     window.addEventListener('touchstart', (event) => {
@@ -176,8 +176,8 @@ class Litebox {
         return;
       }
 
-      let xUp = event.touches[0].clientX,
-          yUp = event.touches[0].clientY;
+      var xUp = event.touches[0].clientX;
+      var yUp = event.touches[0].clientY;
 
       if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
         if ((xDown - xUp) > 0) {
@@ -456,8 +456,8 @@ class Litebox {
    * @returns {Object} The built collection.
    */
   _buildCollection() {
-    var images = document.querySelectorAll(this.options.el),
-        collection = { __: [] };
+    var images = document.querySelectorAll(this.options.el);
+    var collection = { __: [] };
 
     images.forEach(function(image) {
       var gallery = image.dataset.gallery;
@@ -518,7 +518,7 @@ class Litebox {
         error: 'litebox__error',
         hidden: 'hidden'
       }
-    }
+    };
   }
 
 
@@ -560,3 +560,5 @@ class Litebox {
     return output;
   }
 }
+
+new Litebox();
