@@ -21,7 +21,7 @@ var Litebox = function () {
     }
 
     this._current = null;
-    this.VERSION = '0.7.0';
+    this.VERSION = '0.8.2';
 
     this._init();
   }

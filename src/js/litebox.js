@@ -18,7 +18,7 @@ class Litebox {
     this._current = null;
 
     // Current version
-    this.VERSION = '0.7.0';
+    this.VERSION = '0.8.2';
 
     // Start litebox
     this._init();
