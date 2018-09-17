@@ -1,8 +1,11 @@
 @charset "UTF-8";
 
-@import "variables";
-@import "structure";
-@import "buttons";
-@import "animations";
-@import "loader";
-@import "error";
+@import "abstract/variables";
+
+@import "components/animations";
+@import "components/wrapper";
+@import "components/image";
+@import "components/caption";
+@import "components/buttons";
+@import "components/error";
+@import "components/loader";

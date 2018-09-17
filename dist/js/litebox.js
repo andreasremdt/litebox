@@ -71,7 +71,7 @@ var Litebox = function () {
       this._structure.BUTTON_PREV.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonPrev, " ").concat(this.options.classNames.hidden);
       this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
       this._structure.FIGURE.className = this.options.classNames.figure;
-      this._structure.CAPTION.className = "".concat(this.options.classNames.caption, " ").concat(this.options.classNames.hidden);
+      this._structure.CAPTION.className = this.options.classNames.caption;
       this._structure.IMAGE.className = "".concat(this.options.classNames.image, " ").concat(this.options.classNames.hidden);
       this._structure.LOADER.className = "".concat(this.options.classNames.loader, " ").concat(this.options.classNames.hidden);
       this._structure.ERROR.className = "".concat(this.options.classNames.error, " ").concat(this.options.classNames.hidden);
@@ -275,11 +275,11 @@ var Litebox = function () {
     key: "_toggleCaption",
     value: function _toggleCaption(caption) {
       if (!caption) {
-        this._structure.CAPTION.classList.add('hidden');
+        this._structure.CAPTION.classList.add('lightbox__caption--hidden');
       } else {
         this._structure.CAPTION.textContent = caption;
 
-        this._structure.CAPTION.classList.remove('hidden');
+        this._structure.CAPTION.classList.remove('lightbox__caption--hidden');
       }
     }
   }, {

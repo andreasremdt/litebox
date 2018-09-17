@@ -1,0 +1,44 @@
+.litebox-button {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  width: $button-width;
+  height: $button-width;
+  border: none;
+  color: $button-text-color;
+  background-color: rgba($button-background-color, $button-opacity);
+  background-position: center center;
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+  z-index: 5;
+  cursor: pointer;
+  outline: none;
+  border-radius: $button-radius;
+  transition: background-color .1s linear;
+
+  &.is-hidden {
+    display: none;
+  }
+
+  &:hover, &:focus {
+    background-color: rgba($button-background-color, $button-opacity-hover);
+  }
+}
+
+.litebox-button-close {
+  top: 0;
+  right: 0;
+  background-image: url('../icons/close.svg');
+}
+
+.litebox-button-next {
+  right: 0;
+  top: calc(50% - #{$button-height / 2});
+  background-image: url('../icons/arrow-next.svg');
+}
+
+.litebox-button-prev {
+  left: 0;
+  top: calc(50% - #{$button-height / 2});
+  background-image: url('../icons/arrow-prev.svg');
+}

@@ -72,7 +72,7 @@ class Litebox {
    * such as class name and title.
    */
   _applyAttributes() {
-    this._structure.OUTER_WRAPPER.className = `${this.options.classNames.outer} ${this.options.animation && '-fade-in'}`;
+    this._structure.OUTER_WRAPPER.className = this.options.classNames.outer + ' is-animated animate-in'; // TODO: tmp
     this._structure.INNER_WRAPPER.className = this.options.classNames.inner;
     this._structure.BUTTON_CLOSE.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonClose} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_CLOSE.textContent = this.options.labels.close;
@@ -81,7 +81,7 @@ class Litebox {
     this._structure.BUTTON_PREV.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonPrev} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
     this._structure.FIGURE.className = this.options.classNames.figure;
-    this._structure.CAPTION.className = `${this.options.classNames.caption} ${this.options.classNames.hidden}`;
+    this._structure.CAPTION.className = this.options.classNames.caption;
     this._structure.IMAGE.className = `${this.options.classNames.image} ${this.options.classNames.hidden}`;
     this._structure.LOADER.className = `${this.options.classNames.loader} ${this.options.classNames.hidden}`;
     this._structure.ERROR.className = `${this.options.classNames.error} ${this.options.classNames.hidden}`;
@@ -288,10 +288,10 @@ class Litebox {
    */
   _toggleCaption(caption) {
     if (!caption) {
-      this._structure.CAPTION.classList.add('hidden');
+      this._structure.CAPTION.classList.add(this.options.classNames.hidden);
     } else {
       this._structure.CAPTION.textContent = caption;
-      this._structure.CAPTION.classList.remove('hidden');
+      this._structure.CAPTION.classList.remove(this.options.classNames.hidden);
     }
   }
 
@@ -302,18 +302,18 @@ class Litebox {
    * depending on whether there is a next/previous image.
    */
   _toggleButtons() {
-    this._structure.BUTTON_CLOSE.classList.remove('hidden');
+    this._structure.BUTTON_CLOSE.classList.remove(this.options.classNames.hidden);
     if (this._isInGallery()) {
       if (!this._isLast()) {
-        this._structure.BUTTON_NEXT.classList.remove('hidden');
+        this._structure.BUTTON_NEXT.classList.remove(this.options.classNames.hidden);
       } else {
-        this._structure.BUTTON_NEXT.classList.add('hidden');
+        this._structure.BUTTON_NEXT.classList.add(this.options.classNames.hidden);
       }
 
       if (!this._isFirst()) {
-        this._structure.BUTTON_PREV.classList.remove('hidden');
+        this._structure.BUTTON_PREV.classList.remove(this.options.classNames.hidden);
       } else {
-        this._structure.BUTTON_PREV.classList.add('hidden');
+        this._structure.BUTTON_PREV.classList.add(this.options.classNames.hidden);
       }
     }
   }
@@ -359,7 +359,7 @@ class Litebox {
   * Shows the loader while an image is loading.
   */
   _showLoader() {
-    this._structure.LOADER.classList.remove('hidden');
+    this._structure.LOADER.classList.remove(this.options.classNames.hidden);
   }
 
 
@@ -368,7 +368,7 @@ class Litebox {
    * Hides the loader after an image has been loaded.
    */
   _hideLoader() {
-    this._structure.LOADER.classList.add('hidden');
+    this._structure.LOADER.classList.add(this.options.classNames.hidden);
   }
 
 
@@ -377,7 +377,7 @@ class Litebox {
    * In case an image could not be loaded, shows an error message.
    */
   _showError() {
-    this._structure.ERROR.classList.remove('hidden');
+    this._structure.ERROR.classList.remove(this.options.classNames.hidden);
   }
 
 
@@ -506,17 +506,17 @@ class Litebox {
       },
       classNames: {
         outer: 'litebox',
-        inner: 'litebox__inner',
-        figure: 'litebox__image__wrapper',
-        caption: 'litebox__caption',
-        image: 'litebox__image',
-        buttonGeneral: 'litebox__button',
-        buttonClose: 'litebox__button--close',
-        buttonPrev: 'litebox__button--prev',
-        buttonNext: 'litebox__button--next',
-        loader: 'litebox__loader',
-        error: 'litebox__error',
-        hidden: 'hidden'
+        inner: 'litebox-wrapper',
+        figure: 'litebox-image-wrapper',
+        caption: 'litebox-caption',
+        image: 'litebox-image',
+        buttonGeneral: 'litebox-button',
+        buttonClose: 'litebox-button-close',
+        buttonPrev: 'litebox-button-prev',
+        buttonNext: 'litebox-button-next',
+        loader: 'litebox-loader',
+        error: 'litebox-error',
+        hidden: 'is-hidden'
       }
     };
   }

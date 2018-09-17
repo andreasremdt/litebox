@@ -1,0 +1,27 @@
+.litebox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: rgba($overlay-background-color, $overlay-background-opacity);
+}
+
+.litebox-wrapper {
+  position: relative;
+  
+  @media screen and (min-width: $breakpoint) {
+    max-width: $litebox-width-desktop;
+    max-height: $litebox-height-desktop;
+  }
+
+  @media screen and (max-width: $breakpoint) {
+    max-width: $litebox-width-mobile;
+    max-height: $litebox-height-mobile;
+  }
+}

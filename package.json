@@ -10,6 +10,7 @@
     "build:prod": "node-sass src/scss/litebox.scss dist/css/litebox.min.css --output-style compressed; postcss dist/css/litebox.min.css --use autoprefixer -d dist/css --no-map; mkdir dist/js/; touch dist/js/litebox.min.js; babel src/js/litebox.js --out-file dist/js/litebox.min.js --compact",
     "build:dev": "npm run css; npm run js",
     "build": "npm run build:dev; npm run build:prod",
+    "watch:css": "node-sass src/scss/litebox.scss -w dist/css/litebox.css",
     "clean": "rm -rf dist/;"
   },
   "author": "Andreas Remdt",

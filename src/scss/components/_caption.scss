@@ -1,0 +1,16 @@
+.litebox-caption {
+  position: absolute;
+  bottom: $caption-spacing-bottom;
+  left: $caption-spacing-left;
+  right: $caption-spacing-right;
+  padding: $caption-padding;
+  box-sizing: border-box;
+  line-height: 1.5;
+  color: $caption-text-color;
+  background-color: rgba($caption-background-color, $caption-background-opacity);
+  border-radius: $caption-radius;
+
+  &.is-hidden {
+    display: none;
+  }
+}
