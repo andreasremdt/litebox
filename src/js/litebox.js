@@ -72,7 +72,7 @@ class Litebox {
    * such as class name and title.
    */
   _applyAttributes() {
-    this._structure.OUTER_WRAPPER.className = this.options.classNames.outer + ' is-animated animate-in'; // TODO: tmp
+    this._structure.OUTER_WRAPPER.className = `${this.options.classNames.outer}${this.options.animations ? ' is-animated animate-in' : ''}`;
     this._structure.INNER_WRAPPER.className = this.options.classNames.inner;
     this._structure.BUTTON_CLOSE.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonClose} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_CLOSE.textContent = this.options.labels.close;
@@ -81,7 +81,7 @@ class Litebox {
     this._structure.BUTTON_PREV.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonPrev} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
     this._structure.FIGURE.className = this.options.classNames.figure;
-    this._structure.CAPTION.className = this.options.classNames.caption;
+    this._structure.CAPTION.className = `${this.options.classNames.caption} ${this.options.classNames.hidden}`;
     this._structure.IMAGE.className = `${this.options.classNames.image} ${this.options.classNames.hidden}`;
     this._structure.LOADER.className = `${this.options.classNames.loader} ${this.options.classNames.hidden}`;
     this._structure.ERROR.className = `${this.options.classNames.error} ${this.options.classNames.hidden}`;
@@ -209,7 +209,7 @@ class Litebox {
         image.addEventListener('click', (event) => {
           event.preventDefault();
 
-          this._show(image);
+          this._handleOpenLitebox(image);
         });
       }
     }
@@ -221,72 +221,113 @@ class Litebox {
 
 
 
-  _show(image) {
+
+  _handleOpenLitebox(image) {
     if (!document.body.contains(this._LITEBOX)) {
       document.body.appendChild(this._LITEBOX);
     }
 
+    if (this.options.animations) {
+      this._animationCleanup('animate-in');
+    }
+
     this._showLoader();
-
-    this._load(image).then(() => {
-      this._current = image;
-      this._structure.IMAGE.classList.remove(this.options.classNames.hidden);
-
-      this._hideLoader();
-      this._toggleButtons();
-      this._toggleCaption(image.getAttribute(this.options.caption));
-    }).catch(() => {
-      this._current = null;
-
-      this._hideLoader();
-      this._toggleButtons();
-      this._showError();
-    });
+    this._handleImageChange(image);
   }
 
 
 
-  _close() {
-    document.body.removeChild(this._LITEBOX);
+
+
+  _handleImageChange(image, direction = null) {
+    var tmp = new Image();
+    var self = this;
     
-    this._current = null;
+    tmp.src = image.getAttribute(this.options.target);
+    
+    tmp.onload = function() {
+      if (self.options.animations && direction) {
+        self._LITEBOX.classList.add(`animate-to-${direction === 'next' ? 'left' : 'right'}`);
+
+        self._LITEBOX.addEventListener('animationend', (event) => {
+          if (event.animationName === 'litebox-fade-out') {
+            imageLoaded(this.src);
+
+            self._LITEBOX.classList.remove(`animate-to-${direction === 'next' ? 'left' : 'right'}`);
+            self._LITEBOX.classList.add(`animate-from-${direction === 'next' ? 'right' : 'left'}`);
+          }
+
+          if (event.animationName === 'litebox-fade-in') {
+            self._LITEBOX.classList.remove(`animate-from-${direction === 'next' ? 'right' : 'left'}`);
+          }
+        });
+      } else {
+        imageLoaded(this.src);
+      }
+    };
+
+    tmp.onerror = function() {
+      self._current = null;
+
+      self._hideLoader();
+      self._toggleButtons();
+      self._showError();
+    };
+
+    function imageLoaded(src) {
+      self._structure.IMAGE.src = src;
+      self._current = image;
+
+      self._hideLoader();
+      self._toggleCaption();
+      self._toggleButtons();
+    }
+  }
+  
+
+    
+
+  
+  /**
+   * Calls a function to remove Litebox from the DOM once the
+   * fade-out animation has finished (if activated).
+   */
+  _close() {
+    if (this.options.animations) {
+      this._LITEBOX.classList.add('animate-out');
+
+      var self = this;
+
+      this._animationCleanup('animate-out', function() {
+        self._removeLitebox();
+      });
+    } else {
+      this._removeLitebox();
+    }
+  }
+
+  /**
+   * Removes the Litebox wrapper from the DOM and resets
+   * the internal structure and current element. Also removes the event
+   * listener to improve memory usage.
+   */
+  _removeLitebox() {
+    document.body.removeChild(this._LITEBOX);
+
+    this.current = null;
     this._applyAttributes();
   }
 
 
 
 
-
-  /**
-   * Loads the requested image asynchonously if available.
-   * 
-   * @param {HTMLElement} image The actual image to load
-   * @returns {Promise} 
-   */
-  _load(image) {
-    var target = image.getAttribute(this.options.target);
-
-    // If there is no image return
-    if (!target) {
-      return;
-    }
-
-    return new Promise((resolve, reject) => {
-      this._structure.IMAGE.src = target;
-      this._structure.IMAGE.onload = resolve;
-      this._structure.IMAGE.onerror = reject;
-    });
-  }
-
-
-
   /**
    * Either shows or hides the caption, depending on
    * whether there is a text or not.
-   * 
-   * @param {String} caption The caption text 
    */
-  _toggleCaption(caption) {
+  _toggleCaption() {
+    var caption = this._current.getAttribute(this.options.caption);
+
     if (!caption) {
       this._structure.CAPTION.classList.add(this.options.classNames.hidden);
     } else {
@@ -326,7 +367,7 @@ class Litebox {
    */
   _next() {
     if (this._getNext()) {
-      this._show(this._getNext());      
+      this._handleImageChange(this._getNext(), 'next');
     }
   }
 
@@ -338,7 +379,7 @@ class Litebox {
    */
   _prev() {
     if (this._getPrev()) {
-      this._show(this._getPrev());
+      this._handleImageChange(this._getPrev(), 'prev');
     }
   }
 
@@ -482,43 +523,16 @@ class Litebox {
 
 
 
-  /**
-   * Retrieve the default options of Litebox, such as selectors
-   * or animation attributes.
-   * 
-   * @return {Object} The default options
-   */
-  static get defaults() {
-    return {
-      el: '[data-litebox]',
-      target: 'href',
-      caption: 'title',
-      keyboardShortcuts: true,
-      touch: true,
-      autohideControls: true,
-      loop: false,
-      animations: true,
-      labels: {
-        close: 'Close',
-        next: 'Show next image',
-        prev: 'Show previous image',
-        error: 'Sorry, the image couldn\'t be loaded.'
-      },
-      classNames: {
-        outer: 'litebox',
-        inner: 'litebox-wrapper',
-        figure: 'litebox-image-wrapper',
-        caption: 'litebox-caption',
-        image: 'litebox-image',
-        buttonGeneral: 'litebox-button',
-        buttonClose: 'litebox-button-close',
-        buttonPrev: 'litebox-button-prev',
-        buttonNext: 'litebox-button-next',
-        loader: 'litebox-loader',
-        error: 'litebox-error',
-        hidden: 'is-hidden'
-      }
-    };
+  _animationCleanup(name, cb) {
+    if (!this.options.animations || !name) return;
+
+    var wrapper = this._LITEBOX;
+
+    this._LITEBOX.addEventListener('animationend', function() {
+      wrapper.classList.remove(name);
+
+      if (cb) cb();
+    }, { once: true });
   }
 
 
@@ -558,6 +572,45 @@ class Litebox {
     });
 
     return output;
+  }
+
+  /**
+   * Retrieve the default options of Litebox, such as selectors
+   * or animation attributes.
+   * 
+   * @return {Object} The default options
+   */
+  static get defaults() {
+    return {
+      el: '[data-litebox]',
+      target: 'href',
+      caption: 'title',
+      keyboardShortcuts: true,
+      touch: true,
+      autohideControls: true,
+      loop: false,
+      animations: true,
+      labels: {
+        close: 'Close',
+        next: 'Show next image',
+        prev: 'Show previous image',
+        error: 'Sorry, the image couldn\'t be loaded.'
+      },
+      classNames: {
+        outer: 'litebox',
+        inner: 'litebox-wrapper',
+        figure: 'litebox-image-wrapper',
+        caption: 'litebox-caption',
+        image: 'litebox-image',
+        buttonGeneral: 'litebox-button',
+        buttonClose: 'litebox-button-close',
+        buttonPrev: 'litebox-button-prev',
+        buttonNext: 'litebox-button-next',
+        loader: 'litebox-loader',
+        error: 'litebox-error',
+        hidden: 'is-hidden'
+      }
+    };
   }
 }
 
