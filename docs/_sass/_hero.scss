@@ -4,7 +4,7 @@
   align-items: flex-start;
   justify-content: center;
   height: 30rem;
-  background: white url('/images/hero-background.jpg') center/cover no-repeat;
+  background: white url('../images/hero-background.jpg') center/cover no-repeat;
 
   @media (max-width: 660px) {
     padding: 5rem $padding;
