@@ -1,0 +1,19 @@
+title: Litebox
+email: andreas.remdt@gmail.com
+author: Andreas Remdt
+lang: en-US
+description: >-
+  Litebox is a simple, modern and lightweight vanilla JS lightbox to showcase your images.
+baseurl: ""
+url: ""
+twitter_username: jekyllrb
+github_username:  jekyll
+
+markdown: kramdown
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - assets/src
+  - .gitignore

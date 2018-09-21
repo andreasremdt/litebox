@@ -1,0 +1,17 @@
+<nav class="main-navigation box push-below">
+  <svg width="35" height="35" class="logo" aria-hidden="true">
+    <use xlink:href="/icons/symbol-defs.svg#image"></use>
+  </svg>
+
+  <button type="button" class="toggle" data-menu-toggle>
+    <svg width="30" height="30">
+      <use xlink:href="/icons/symbol-defs.svg#menu"></use>
+    </svg>
+  </button>
+
+  <div class="items" data-menu>
+    {% for item in site.data.menus %}
+      <a href="{{ item.permalink }}" class="item{% if page.url == item.permalink %} active{% endif %}">{{ item.name }}</a>
+    {% endfor %}
+  </div>
+</nav>

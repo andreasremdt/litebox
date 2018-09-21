@@ -1,0 +1,12 @@
+.content-card {
+  display: flex;
+
+  > .figure {
+    width: 40rem;
+    margin: -1.5rem 1.5rem -1.5rem -1.5rem;
+  }
+
+  > .content {
+    align-self: center;
+  }
+}

@@ -1,0 +1,10 @@
+- name: Home
+  permalink: /
+- name: Download
+  permalink: /downloads/litebox.zip
+- name: Demo
+  permalink: /demo.html
+- name: Documentation
+  permalink: /docs.html
+- name: GitHub
+  permalink: https://github.com/andreasremdt/litebox

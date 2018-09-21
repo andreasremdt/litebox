@@ -1,0 +1,11 @@
+.table-of-contents {
+  .item {
+    display: block;
+    color: inherit;
+    margin-bottom: 1rem;
+
+    &:hover, &:focus {
+      color: $accent-color;
+    }
+  }
+}

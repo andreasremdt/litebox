@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+/docs/_site
+/docs/.sass-cache
+/docs/.jekyll-metadata

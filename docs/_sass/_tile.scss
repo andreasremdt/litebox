@@ -1,0 +1,17 @@
+.content-tile {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-left: 4rem;
+
+  > .text {
+    margin-bottom: 0;
+  }
+
+  > .icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: $gray;
+  }
+}

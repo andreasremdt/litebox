@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang }}" dir="ltr">
+  <head>
+    {% include head.html %}
+  </head>
+  <body>
+    <div class="container">
+      {% include navigation.html %}
+
+      {% if page.layout != "home" %}
+        <h1 class="site-title">{{ page.title }}</h1>
+        
+        <main class="box push-below">
+          {% if page.lead %}<p class="lead">{{ page.lead | markdownify | replace: '<p>', '' | replace: '</p>', '' }}</p>{% endif %}
+          {{ content }}
+        </main>
+      {% else %}
+        {{ content }}
+      {% endif %}
+
+      {% include footer.html %}
+    </div>
+
+    {% include scripts.html %}
+  </body>
+</html>
