@@ -11,7 +11,7 @@
 
   <div class="items" data-menu>
     {% for item in site.data.menus %}
-      <a href="{{ item.permalink }}" class="item{% if page.url == item.permalink %} active{% endif %}">{{ item.name }}</a>
+      <a href="{{ site.url }}{{ item.permalink }}" class="item{% if page.url == item.permalink %} active{% endif %}">{{ item.name }}</a>
     {% endfor %}
   </div>
 </nav>
