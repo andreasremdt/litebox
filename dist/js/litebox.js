@@ -120,11 +120,11 @@ var Litebox = function () {
         }
 
         if (event.keyCode === 39) {
-          _this.next();
+          _this.switch('next');
         }
 
         if (event.keyCode === 37) {
-          _this.prev();
+          _this.switch('prev');
         }
       });
     }
@@ -157,9 +157,9 @@ var Litebox = function () {
 
         if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
           if (xDown - xUp > 0) {
-            _this2.next();
+            _this2.switch('next');
           } else {
-            _this2.prev();
+            _this2.switch('prev');
           }
         } else {
           if (yDown - yUp < 0) {
@@ -177,44 +177,29 @@ var Litebox = function () {
       var _this3 = this;
 
       for (var gallery in this._collection) {
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _loop = function _loop(item) {
+          var image = _this3._collection[gallery][item];
+          image.addEventListener('click', function (event) {
+            event.preventDefault();
 
-        try {
-          var _loop = function _loop() {
-            var image = _step.value;
-            image.addEventListener('click', function (event) {
-              event.preventDefault();
+            _this3.open(image);
+          });
+        };
 
-              _this3.open(image);
-            });
-          };
-
-          for (var _iterator = this._collection[gallery][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            _loop();
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
+        for (var item in this._collection[gallery]) {
+          _loop(item);
         }
       }
 
       this._structure.BUTTON_CLOSE.addEventListener('click', this.remove.bind(this));
 
-      this._structure.BUTTON_NEXT.addEventListener('click', this.next.bind(this));
+      this._structure.BUTTON_NEXT.addEventListener('click', function () {
+        return _this3.switch('next');
+      });
 
-      this._structure.BUTTON_PREV.addEventListener('click', this.prev.bind(this));
+      this._structure.BUTTON_PREV.addEventListener('click', function () {
+        return _this3.switch('prev');
+      });
     }
   }, {
     key: "open",
@@ -252,47 +237,28 @@ var Litebox = function () {
       }, this.options.animation);
     }
   }, {
-    key: "next",
-    value: function next() {
+    key: "switch",
+    value: function _switch(direction) {
       var _this6 = this;
 
-      var next = this.hasNext();
+      var target = this.exists(direction);
 
-      if (next) {
+      if (target) {
         this._showLoader();
 
-        this._beforeLoad(next[this.options.target], function () {
-          _this6._animate('before-next', function () {
-            _this6._afterLoad(next);
+        this._beforeLoad(target[this.options.target], function () {
+          _this6._animate("before-".concat(direction), function () {
+            _this6._afterLoad(target);
 
-            _this6._animate('after-next', null, _this6.options.animation);
+            _this6._animate("after-".concat(direction), null, _this6.options.animation);
           }, _this6.options.animation);
-        });
-      }
-    }
-  }, {
-    key: "prev",
-    value: function prev() {
-      var _this7 = this;
-
-      var prev = this.hasPrev();
-
-      if (prev) {
-        this._showLoader();
-
-        this._beforeLoad(prev[this.options.target], function () {
-          _this7._animate('before-prev', function () {
-            _this7._afterLoad(prev);
-
-            _this7._animate('after-prev', null, _this7.options.animation);
-          }, _this7.options.animation);
         });
       }
     }
   }, {
     key: "_beforeLoad",
     value: function _beforeLoad(src, cb) {
-      var _this8 = this;
+      var _this7 = this;
 
       var image = new Image();
       image.src = src;
@@ -301,7 +267,7 @@ var Litebox = function () {
       image.onerror = function () {
         cb();
 
-        _this8._showError();
+        _this7._showError();
       };
     }
   }, {
@@ -324,7 +290,7 @@ var Litebox = function () {
   }, {
     key: "_animate",
     value: function _animate(className, cb, time) {
-      var _this9 = this;
+      var _this8 = this;
 
       if (this.options.animation && this.options.animation > 0) {
         this._LITEBOX.classList.add(className);
@@ -332,45 +298,34 @@ var Litebox = function () {
         setTimeout(function () {
           if (cb) cb();
 
-          _this9._LITEBOX.classList.remove(className);
+          _this8._LITEBOX.classList.remove(className);
         }, time);
       } else {
         if (cb) cb();
       }
     }
   }, {
-    key: "hasNext",
-    value: function hasNext() {
-      if (!this._current) {
-        return;
-      }
+    key: "exists",
+    value: function exists(direction) {
+      if (!this._current) return;
 
       var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
 
       var i = gallery.indexOf(this._current);
 
-      if (this.options.loop && i + 1 === gallery.length) {
-        return gallery[0];
+      if (direction === 'next') {
+        if (this.options.loop && i + 1 === gallery.length) {
+          return gallery[0];
+        }
+
+        return gallery[i + 1] || false;
+      } else if (direction === 'prev') {
+        if (this.options.loop && i === 0) {
+          return gallery[gallery.length - 1];
+        }
+
+        return gallery[i - 1] || false;
       }
-
-      return gallery[i + 1] || false;
-    }
-  }, {
-    key: "hasPrev",
-    value: function hasPrev() {
-      if (!this._current) {
-        return;
-      }
-
-      var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-
-      var i = gallery.indexOf(this._current);
-
-      if (this.options.loop && i === 0) {
-        return gallery[gallery.length - 1];
-      }
-
-      return gallery[i - 1] || false;
     }
   }, {
     key: "_toggleCaption",
@@ -433,7 +388,7 @@ var Litebox = function () {
     key: "_isInGallery",
     value: function _isInGallery() {
       for (var gallery in this._collection) {
-        if (gallery !== '__' && this._collection[gallery].includes(this._current)) {
+        if (gallery !== '__' && this._collection[gallery].indexOf(this._current) !== -1) {
           return true;
         }
       }
@@ -469,7 +424,7 @@ var Litebox = function () {
       var collection = {
         __: []
       };
-      images.forEach(function (image) {
+      [].forEach.call(images, function (image) {
         var gallery = image.dataset.gallery;
 
         if (gallery) {

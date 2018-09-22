@@ -206,7 +206,9 @@ class Litebox {
   _registerMouseEvents() {
     // Adds an event listener to every image found
     for (let gallery in this._collection) {
-      for (let image of this._collection[gallery]) {
+      for (let item in this._collection[gallery]) {
+        let image = this._collection[gallery][item];
+        
         image.addEventListener('click', (event) => {
           event.preventDefault();
 
@@ -419,7 +421,7 @@ class Litebox {
    */
   _isInGallery() {
     for (let gallery in this._collection) {
-      if (gallery !== '__' && this._collection[gallery].includes(this._current)) {
+      if (gallery !== '__' && this._collection[gallery].indexOf(this._current) !== -1) {
         return true;
       }
     }
@@ -473,8 +475,8 @@ class Litebox {
   _buildCollection() {
     var images = document.querySelectorAll(this.options.el);
     var collection = { __: [] };
-
-    images.forEach(function(image) {
+    
+    [].forEach.call(images, image => {
       var gallery = image.dataset.gallery;
 
       // If an image has the `gallery` attribute, add it to the
