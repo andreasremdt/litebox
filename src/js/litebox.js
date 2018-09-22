@@ -18,7 +18,7 @@ class Litebox {
     this._current = null;
 
     // Current version
-    this.VERSION = '0.8.3';
+    this.VERSION = '0.8.4';
 
     // Start litebox
     this._init();
@@ -307,7 +307,7 @@ class Litebox {
 
 
   exists(direction) {
-    if (!this._current) return;
+    if (!this._current || !this._isInGallery()) return false;
 
     var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
     var i = gallery.indexOf(this._current);

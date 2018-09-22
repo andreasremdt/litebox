@@ -21,7 +21,7 @@ var Litebox = function () {
     }
 
     this._current = null;
-    this.VERSION = '0.8.3';
+    this.VERSION = '0.8.4';
 
     this._init();
   }
@@ -307,7 +307,7 @@ var Litebox = function () {
   }, {
     key: "exists",
     value: function exists(direction) {
-      if (!this._current) return;
+      if (!this._current || !this._isInGallery()) return false;
 
       var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
 
