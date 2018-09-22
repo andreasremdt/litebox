@@ -134,12 +134,12 @@ class Litebox {
 
       // Right arrow is pressed and gallery is enabled -> display next image
       if (event.keyCode === 39) {
-        this.next();
+        this.switch('next');
       }
 
       // Left arrow is pressed and gallery is enabled -> display previous image
       if (event.keyCode === 37) {
-        this.prev();
+        this.switch('prev');
       }
     });
   }
@@ -182,9 +182,9 @@ class Litebox {
 
       if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
         if ((xDown - xUp) > 0) {
-          this.next();
+          this.switch('next');
         } else {
-          this.prev();
+          this.switch('prev');
         }
       } else {
         if ((yDown - yUp) < 0) {
@@ -216,8 +216,8 @@ class Litebox {
     }
 
     this._structure.BUTTON_CLOSE.addEventListener('click', this.remove.bind(this));
-    this._structure.BUTTON_NEXT.addEventListener('click', this.next.bind(this));
-    this._structure.BUTTON_PREV.addEventListener('click', this.prev.bind(this));
+    this._structure.BUTTON_NEXT.addEventListener('click', () => this.switch('next'));
+    this._structure.BUTTON_PREV.addEventListener('click', () => this.switch('prev'));
   }
 
 
@@ -249,29 +249,16 @@ class Litebox {
     }, this.options.animation);
   }
 
-  next() {
-    var next = this.hasNext();
-    
-    if (next) {
+
+  switch(direction) {
+    var target = this.exists(direction);
+
+    if (target) {
       this._showLoader();
-      this._beforeLoad(next[this.options.target], () => {
-        this._animate('before-next', () => {
-          this._afterLoad(next);
-          this._animate('after-next', null, this.options.animation);
-        }, this.options.animation);
-      });
-    }
-  }
-  
-  prev() {
-    var prev = this.hasPrev();
-    
-    if (prev) {
-      this._showLoader();
-      this._beforeLoad(prev[this.options.target], () => {
-        this._animate('before-prev', () => {
-          this._afterLoad(prev);
-          this._animate('after-prev', null, this.options.animation);
+      this._beforeLoad(target[this.options.target], () => {
+        this._animate(`before-${direction}`, () => {
+          this._afterLoad(target);
+          this._animate(`after-${direction}`, null, this.options.animation);
         }, this.options.animation);
       });
     }
@@ -317,37 +304,26 @@ class Litebox {
   }
 
 
-
-  hasNext() {
-    if (!this._current) {
-      return;
-    }
+  exists(direction) {
+    if (!this._current) return;
 
     var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
     var i = gallery.indexOf(this._current);
 
-    if (this.options.loop && (i + 1) === gallery.length) {
-      return gallery[0];
-    }
+    if (direction === 'next') {
+      if (this.options.loop && (i + 1) === gallery.length) {
+        return gallery[0];
+      }
 
-    return gallery[i + 1] || false;
+      return gallery[i + 1] || false;
+    } else if (direction === 'prev') {
+      if (this.options.loop && i === 0) {
+        return gallery[gallery.length - 1];
+      }
+
+      return gallery[i - 1] || false;
+    }
   }
-
-  hasPrev() {
-    if (!this._current) {
-      return;
-    }
-
-    var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-    var i = gallery.indexOf(this._current);
-
-    if (this.options.loop && i === 0) {
-      return gallery[gallery.length - 1];
-    }
-
-    return gallery[i - 1] || false;
-  }
-
 
 
 
