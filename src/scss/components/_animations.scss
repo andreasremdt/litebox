@@ -43,17 +43,16 @@
   to { transform: translateX(0); }
 }
 
-
 .litebox.is-animated {
-  &.animate-in {
+  &.before-load {
     animation: litebox-fade-in .5s ease-out forwards;
-    
+
     .litebox-wrapper {
       animation: litebox-slide-up .5s ease-out forwards;
     }
   }
 
-  &.animate-out {
+  &.before-unload {
     animation: litebox-fade-out .5s ease-out forwards;
     
     .litebox-wrapper {
@@ -61,39 +60,27 @@
     }
   }
 
-  &.animate-to-left {
+  &.before-next {
     .litebox-wrapper {
-      opacity: 0;
-      animation:
-        litebox-slide-to-left .5s ease-out,
-        litebox-fade-out .5s ease-out;
+      animation: litebox-slide-to-left .5s ease-out forwards, litebox-fade-out .5s ease-out forwards;
     }
   }
 
-  &.animate-from-left {
+  &.after-next {
     .litebox-wrapper {
-      opacity: 0;
-      animation:
-        litebox-slide-from-left .5s ease-out forwards,
-        litebox-fade-in .5s ease-out forwards;
+      animation: litebox-slide-from-right .5s ease-out, litebox-fade-in .5s ease-out;
     }
   }
 
-  &.animate-to-right {
+  &.before-prev {
     .litebox-wrapper {
-      opacity: 0;
-      animation:
-        litebox-slide-to-right .5s ease-out,
-        litebox-fade-out .5s ease-out;
+      animation: litebox-slide-to-right .5s ease-out forwards, litebox-fade-out .5s ease-out forwards;
     }
   }
 
-  &.animate-from-right {
+  &.after-prev {
     .litebox-wrapper {
-      opacity: 0;
-      animation:
-        litebox-slide-from-right .5s ease-out forwards,
-        litebox-fade-in .5s ease-out forwards;
+      animation: litebox-slide-from-left .5s ease-out, litebox-fade-in .5s ease-out;
     }
   }
 }

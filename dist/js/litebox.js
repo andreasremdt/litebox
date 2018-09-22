@@ -21,7 +21,7 @@ var Litebox = function () {
     }
 
     this._current = null;
-    this.VERSION = '0.8.2';
+    this.VERSION = '0.8.3';
 
     this._init();
   }
@@ -33,7 +33,7 @@ var Litebox = function () {
 
       this._createElements();
 
-      this._applyAttributes();
+      this._reset();
 
       this._createStructure();
 
@@ -60,31 +60,11 @@ var Litebox = function () {
       };
     }
   }, {
-    key: "_applyAttributes",
-    value: function _applyAttributes() {
-      this._structure.OUTER_WRAPPER.className = "".concat(this.options.classNames.outer).concat(this.options.animations ? ' is-animated animate-in' : '');
-      this._structure.INNER_WRAPPER.className = this.options.classNames.inner;
-      this._structure.BUTTON_CLOSE.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonClose, " ").concat(this.options.classNames.hidden);
-      this._structure.BUTTON_CLOSE.textContent = this.options.labels.close;
-      this._structure.BUTTON_NEXT.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonNext, " ").concat(this.options.classNames.hidden);
-      this._structure.BUTTON_NEXT.textContent = this.options.labels.next;
-      this._structure.BUTTON_PREV.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonPrev, " ").concat(this.options.classNames.hidden);
-      this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
-      this._structure.FIGURE.className = this.options.classNames.figure;
-      this._structure.CAPTION.className = "".concat(this.options.classNames.caption, " ").concat(this.options.classNames.hidden);
-      this._structure.IMAGE.className = "".concat(this.options.classNames.image, " ").concat(this.options.classNames.hidden);
-      this._structure.LOADER.className = "".concat(this.options.classNames.loader, " ").concat(this.options.classNames.hidden);
-      this._structure.ERROR.className = "".concat(this.options.classNames.error, " ").concat(this.options.classNames.hidden);
-      this._structure.ERROR.textContent = this.options.labels.error;
-    }
-  }, {
     key: "_createStructure",
     value: function _createStructure() {
       this._structure.OUTER_WRAPPER.appendChild(this._structure.INNER_WRAPPER);
 
       this._structure.OUTER_WRAPPER.appendChild(this._structure.LOADER);
-
-      this._structure.OUTER_WRAPPER.appendChild(this._structure.ERROR);
 
       this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_CLOSE);
 
@@ -94,11 +74,32 @@ var Litebox = function () {
 
       this._structure.INNER_WRAPPER.appendChild(this._structure.FIGURE);
 
+      this._structure.INNER_WRAPPER.appendChild(this._structure.ERROR);
+
       this._structure.FIGURE.appendChild(this._structure.IMAGE);
 
       this._structure.FIGURE.appendChild(this._structure.CAPTION);
 
       this._LITEBOX = this._structure.OUTER_WRAPPER;
+    }
+  }, {
+    key: "_reset",
+    value: function _reset() {
+      this._structure.OUTER_WRAPPER.className = "".concat(this.options.classNames.outer).concat(this.options.animation ? ' is-animated' : '');
+      this._structure.INNER_WRAPPER.className = "".concat(this.options.classNames.inner, " ").concat(this.options.classNames.hidden);
+      this._structure.BUTTON_CLOSE.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonClose, " ").concat(this.options.classNames.hidden);
+      this._structure.BUTTON_CLOSE.textContent = this.options.labels.close;
+      this._structure.BUTTON_NEXT.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonNext, " ").concat(this.options.classNames.hidden);
+      this._structure.BUTTON_NEXT.textContent = this.options.labels.next;
+      this._structure.BUTTON_PREV.className = "".concat(this.options.classNames.buttonGeneral, " ").concat(this.options.classNames.buttonPrev, " ").concat(this.options.classNames.hidden);
+      this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
+      this._structure.FIGURE.className = this.options.classNames.figure;
+      this._structure.CAPTION.className = "".concat(this.options.classNames.caption, " ").concat(this.options.classNames.hidden);
+      this._structure.IMAGE.className = "".concat(this.options.classNames.image);
+      this._structure.IMAGE.src = '';
+      this._structure.LOADER.className = "".concat(this.options.classNames.loader, " ").concat(this.options.classNames.hidden);
+      this._structure.ERROR.className = "".concat(this.options.classNames.error, " ").concat(this.options.classNames.hidden);
+      this._structure.ERROR.textContent = this.options.labels.error;
     }
   }, {
     key: "_registerKeyboardEvents",
@@ -115,15 +116,15 @@ var Litebox = function () {
         }
 
         if (event.keyCode === 27) {
-          _this._close();
+          _this.remove();
         }
 
         if (event.keyCode === 39) {
-          _this._next();
+          _this.next();
         }
 
         if (event.keyCode === 37) {
-          _this._prev();
+          _this.prev();
         }
       });
     }
@@ -156,13 +157,13 @@ var Litebox = function () {
 
         if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
           if (xDown - xUp > 0) {
-            _this2._next();
+            _this2.next();
           } else {
-            _this2._prev();
+            _this2.prev();
           }
         } else {
           if (yDown - yUp < 0) {
-            _this2._close();
+            _this2.remove();
           }
         }
 
@@ -186,7 +187,7 @@ var Litebox = function () {
             image.addEventListener('click', function (event) {
               event.preventDefault();
 
-              _this3._handleOpenLitebox(image);
+              _this3.open(image);
             });
           };
 
@@ -209,102 +210,167 @@ var Litebox = function () {
         }
       }
 
-      this._structure.BUTTON_CLOSE.addEventListener('click', this._close.bind(this));
+      this._structure.BUTTON_CLOSE.addEventListener('click', this.remove.bind(this));
 
-      this._structure.BUTTON_NEXT.addEventListener('click', this._next.bind(this));
+      this._structure.BUTTON_NEXT.addEventListener('click', this.next.bind(this));
 
-      this._structure.BUTTON_PREV.addEventListener('click', this._prev.bind(this));
+      this._structure.BUTTON_PREV.addEventListener('click', this.prev.bind(this));
     }
   }, {
-    key: "_handleOpenLitebox",
-    value: function _handleOpenLitebox(image) {
-      if (!document.body.contains(this._LITEBOX)) {
-        document.body.appendChild(this._LITEBOX);
+    key: "open",
+    value: function open(element) {
+      var _this4 = this;
+
+      if (document.body.contains(this._LITEBOX)) {
+        return;
       }
 
-      if (this.options.animations) {
-        this._animationCleanup('animate-in');
-      }
+      document.body.appendChild(this._LITEBOX);
+
+      this._animate('before-load', null, this.options.animation);
 
       this._showLoader();
 
-      this._handleImageChange(image);
+      this._beforeLoad(element[this.options.target], function () {
+        _this4._afterLoad(element);
+      });
     }
   }, {
-    key: "_handleImageChange",
-    value: function _handleImageChange(image) {
-      var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      var tmp = new Image();
-      var self = this;
-      tmp.src = image.getAttribute(this.options.target);
+    key: "remove",
+    value: function remove() {
+      var _this5 = this;
 
-      tmp.onload = function () {
-        var _this4 = this;
-
-        if (self.options.animations && direction) {
-          self._LITEBOX.classList.add("animate-to-".concat(direction === 'next' ? 'left' : 'right'));
-
-          self._LITEBOX.addEventListener('animationend', function (event) {
-            if (event.animationName === 'litebox-fade-out') {
-              imageLoaded(_this4.src);
-
-              self._LITEBOX.classList.remove("animate-to-".concat(direction === 'next' ? 'left' : 'right'));
-
-              self._LITEBOX.classList.add("animate-from-".concat(direction === 'next' ? 'right' : 'left'));
-            }
-
-            if (event.animationName === 'litebox-fade-in') {
-              self._LITEBOX.classList.remove("animate-from-".concat(direction === 'next' ? 'right' : 'left'));
-            }
-          });
-        } else {
-          imageLoaded(this.src);
-        }
-      };
-
-      tmp.onerror = function () {
-        self._current = null;
-
-        self._hideLoader();
-
-        self._toggleButtons();
-
-        self._showError();
-      };
-
-      function imageLoaded(src) {
-        self._structure.IMAGE.src = src;
-        self._current = image;
-
-        self._hideLoader();
-
-        self._toggleCaption();
-
-        self._toggleButtons();
+      if (!document.body.contains(this._LITEBOX)) {
+        return;
       }
+
+      this._animate('before-unload', function () {
+        document.body.removeChild(_this5._LITEBOX);
+        _this5._current = null;
+
+        _this5._reset();
+      }, this.options.animation);
     }
   }, {
-    key: "_close",
-    value: function _close() {
-      if (this.options.animations) {
-        this._LITEBOX.classList.add('animate-out');
+    key: "next",
+    value: function next() {
+      var _this6 = this;
 
-        var self = this;
+      var next = this.hasNext();
 
-        this._animationCleanup('animate-out', function () {
-          self._removeLitebox();
+      if (next) {
+        this._showLoader();
+
+        this._beforeLoad(next[this.options.target], function () {
+          _this6._animate('before-next', function () {
+            _this6._afterLoad(next);
+
+            _this6._animate('after-next', null, _this6.options.animation);
+          }, _this6.options.animation);
         });
-      } else {
-        this._removeLitebox();
       }
     }
   }, {
-    key: "_removeLitebox",
-    value: function _removeLitebox() {
-      document.body.removeChild(this._LITEBOX);
-      this.current = null;
+    key: "prev",
+    value: function prev() {
+      var _this7 = this;
 
-      this._applyAttributes();
+      var prev = this.hasPrev();
+
+      if (prev) {
+        this._showLoader();
+
+        this._beforeLoad(prev[this.options.target], function () {
+          _this7._animate('before-prev', function () {
+            _this7._afterLoad(prev);
+
+            _this7._animate('after-prev', null, _this7.options.animation);
+          }, _this7.options.animation);
+        });
+      }
+    }
+  }, {
+    key: "_beforeLoad",
+    value: function _beforeLoad(src, cb) {
+      var _this8 = this;
+
+      var image = new Image();
+      image.src = src;
+      image.onload = cb;
+
+      image.onerror = function () {
+        cb();
+
+        _this8._showError();
+      };
+    }
+  }, {
+    key: "_afterLoad",
+    value: function _afterLoad(element) {
+      this._structure.IMAGE.src = element[this.options.target];
+
+      this._structure.INNER_WRAPPER.classList.remove('is-hidden');
+
+      this._current = element;
+
+      this._hideError();
+
+      this._hideLoader();
+
+      this._toggleCaption();
+
+      this._toggleButtons();
+    }
+  }, {
+    key: "_animate",
+    value: function _animate(className, cb, time) {
+      var _this9 = this;
+
+      if (this.options.animation && this.options.animation > 0) {
+        this._LITEBOX.classList.add(className);
+
+        setTimeout(function () {
+          if (cb) cb();
+
+          _this9._LITEBOX.classList.remove(className);
+        }, time);
+      } else {
+        if (cb) cb();
+      }
+    }
+  }, {
+    key: "hasNext",
+    value: function hasNext() {
+      if (!this._current) {
+        return;
+      }
+
+      var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
+
+      var i = gallery.indexOf(this._current);
+
+      if (this.options.loop && i + 1 === gallery.length) {
+        return gallery[0];
+      }
+
+      return gallery[i + 1] || false;
+    }
+  }, {
+    key: "hasPrev",
+    value: function hasPrev() {
+      if (!this._current) {
+        return;
+      }
+
+      var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
+
+      var i = gallery.indexOf(this._current);
+
+      if (this.options.loop && i === 0) {
+        return gallery[gallery.length - 1];
+      }
+
+      return gallery[i - 1] || false;
     }
   }, {
     key: "_toggleCaption",
@@ -325,31 +391,17 @@ var Litebox = function () {
       this._structure.BUTTON_CLOSE.classList.remove(this.options.classNames.hidden);
 
       if (this._isInGallery()) {
-        if (!this._isLast()) {
-          this._structure.BUTTON_NEXT.classList.remove(this.options.classNames.hidden);
-        } else {
+        if (this._isLast() && !this.options.loop) {
           this._structure.BUTTON_NEXT.classList.add(this.options.classNames.hidden);
+        } else {
+          this._structure.BUTTON_NEXT.classList.remove(this.options.classNames.hidden);
         }
 
-        if (!this._isFirst()) {
-          this._structure.BUTTON_PREV.classList.remove(this.options.classNames.hidden);
-        } else {
+        if (this._isFirst() && !this.options.loop) {
           this._structure.BUTTON_PREV.classList.add(this.options.classNames.hidden);
+        } else {
+          this._structure.BUTTON_PREV.classList.remove(this.options.classNames.hidden);
         }
-      }
-    }
-  }, {
-    key: "_next",
-    value: function _next() {
-      if (this._getNext()) {
-        this._handleImageChange(this._getNext(), 'next');
-      }
-    }
-  }, {
-    key: "_prev",
-    value: function _prev() {
-      if (this._getPrev()) {
-        this._handleImageChange(this._getPrev(), 'prev');
       }
     }
   }, {
@@ -371,6 +423,11 @@ var Litebox = function () {
     key: "_showError",
     value: function _showError() {
       this._structure.ERROR.classList.remove(this.options.classNames.hidden);
+    }
+  }, {
+    key: "_hideError",
+    value: function _hideError() {
+      this._structure.ERROR.classList.add(this.options.classNames.hidden);
     }
   }, {
     key: "_isInGallery",
@@ -406,22 +463,6 @@ var Litebox = function () {
       return false;
     }
   }, {
-    key: "_getNext",
-    value: function _getNext() {
-      var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-
-      var i = gallery.indexOf(this._current);
-      return gallery[i + 1];
-    }
-  }, {
-    key: "_getPrev",
-    value: function _getPrev() {
-      var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-
-      var i = gallery.indexOf(this._current);
-      return gallery[i - 1];
-    }
-  }, {
     key: "_buildCollection",
     value: function _buildCollection() {
       var images = document.querySelectorAll(this.options.el);
@@ -442,19 +483,6 @@ var Litebox = function () {
         }
       });
       this._collection = collection;
-    }
-  }, {
-    key: "_animationCleanup",
-    value: function _animationCleanup(name, cb) {
-      if (!this.options.animations || !name) return;
-      var wrapper = this._LITEBOX;
-
-      this._LITEBOX.addEventListener('animationend', function () {
-        wrapper.classList.remove(name);
-        if (cb) cb();
-      }, {
-        once: true
-      });
     }
   }], [{
     key: "_isObject",
@@ -488,8 +516,9 @@ var Litebox = function () {
         keyboardShortcuts: true,
         touch: true,
         autohideControls: true,
+        slideshow: 5000,
         loop: false,
-        animations: true,
+        animation: 500,
         labels: {
           close: 'Close',
           next: 'Show next image',
@@ -516,5 +545,3 @@ var Litebox = function () {
 
   return Litebox;
 }();
-
-new Litebox();

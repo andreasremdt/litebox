@@ -18,7 +18,7 @@ class Litebox {
     this._current = null;
 
     // Current version
-    this.VERSION = '0.8.2';
+    this.VERSION = '0.8.3';
 
     // Start litebox
     this._init();
@@ -35,7 +35,7 @@ class Litebox {
 
     // Step 1: Build & prepare HTML elements
     this._createElements();
-    this._applyAttributes();
+    this._reset();
     this._createStructure();
 
     // Step 2: Apply interaction with event listeners
@@ -68,12 +68,32 @@ class Litebox {
 
 
   /**
+   * Builds the entire DOM structure of litebox and appends
+   * the classes to each element.
+   */
+  _createStructure() {
+    this._structure.OUTER_WRAPPER.appendChild(this._structure.INNER_WRAPPER);
+    this._structure.OUTER_WRAPPER.appendChild(this._structure.LOADER);
+    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_CLOSE);
+    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_NEXT);
+    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_PREV);
+    this._structure.INNER_WRAPPER.appendChild(this._structure.FIGURE);
+    this._structure.INNER_WRAPPER.appendChild(this._structure.ERROR);
+    this._structure.FIGURE.appendChild(this._structure.IMAGE);
+    this._structure.FIGURE.appendChild(this._structure.CAPTION);
+
+    this._LITEBOX = this._structure.OUTER_WRAPPER;
+  }
+
+
+
+  /**
    * Applies the necessary attributes to each HTML element,
    * such as class name and title.
    */
-  _applyAttributes() {
-    this._structure.OUTER_WRAPPER.className = `${this.options.classNames.outer}${this.options.animations ? ' is-animated animate-in' : ''}`;
-    this._structure.INNER_WRAPPER.className = this.options.classNames.inner;
+  _reset() {
+    this._structure.OUTER_WRAPPER.className = `${this.options.classNames.outer}${this.options.animation ? ' is-animated' : ''}`;
+    this._structure.INNER_WRAPPER.className = `${this.options.classNames.inner} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_CLOSE.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonClose} ${this.options.classNames.hidden}`;
     this._structure.BUTTON_CLOSE.textContent = this.options.labels.close;
     this._structure.BUTTON_NEXT.className = `${this.options.classNames.buttonGeneral} ${this.options.classNames.buttonNext} ${this.options.classNames.hidden}`;
@@ -82,33 +102,14 @@ class Litebox {
     this._structure.BUTTON_PREV.textContent = this.options.labels.prev;
     this._structure.FIGURE.className = this.options.classNames.figure;
     this._structure.CAPTION.className = `${this.options.classNames.caption} ${this.options.classNames.hidden}`;
-    this._structure.IMAGE.className = `${this.options.classNames.image} ${this.options.classNames.hidden}`;
+    this._structure.IMAGE.className = `${this.options.classNames.image}`;
+    this._structure.IMAGE.src = '';
     this._structure.LOADER.className = `${this.options.classNames.loader} ${this.options.classNames.hidden}`;
     this._structure.ERROR.className = `${this.options.classNames.error} ${this.options.classNames.hidden}`;
     this._structure.ERROR.textContent = this.options.labels.error;
   }
 
 
-
-  /**
-   * Builds the entire DOM structure of litebox and appends
-   * the classes to each element.
-   */
-  _createStructure() {
-    this._structure.OUTER_WRAPPER.appendChild(this._structure.INNER_WRAPPER);
-    this._structure.OUTER_WRAPPER.appendChild(this._structure.LOADER);
-    this._structure.OUTER_WRAPPER.appendChild(this._structure.ERROR);
-    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_CLOSE);
-    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_NEXT);
-    this._structure.INNER_WRAPPER.appendChild(this._structure.BUTTON_PREV);
-    this._structure.INNER_WRAPPER.appendChild(this._structure.FIGURE);
-    this._structure.FIGURE.appendChild(this._structure.IMAGE);
-    this._structure.FIGURE.appendChild(this._structure.CAPTION);
-
-    this._LITEBOX = this._structure.OUTER_WRAPPER;
-  }
-
-  
 
   /**
    * If the users has enabled keyboard events, this method registers
@@ -128,17 +129,17 @@ class Litebox {
 
       // ESC key is pressed, close litebox
       if (event.keyCode === 27) {
-        this._close();
+        this.remove();
       }
 
       // Right arrow is pressed and gallery is enabled -> display next image
       if (event.keyCode === 39) {
-        this._next();
+        this.next();
       }
 
       // Left arrow is pressed and gallery is enabled -> display previous image
       if (event.keyCode === 37) {
-        this._prev();
+        this.prev();
       }
     });
   }
@@ -181,13 +182,13 @@ class Litebox {
 
       if (Math.abs(xDown - xUp) > Math.abs(yDown - yUp)) {
         if ((xDown - xUp) > 0) {
-          this._next();
+          this.next();
         } else {
-          this._prev();
+          this.prev();
         }
       } else {
         if ((yDown - yUp) < 0) {
-          this._close();
+          this.remove();
         }
       }
 
@@ -209,113 +210,142 @@ class Litebox {
         image.addEventListener('click', (event) => {
           event.preventDefault();
 
-          this._handleOpenLitebox(image);
+          this.open(image);
         });
       }
     }
 
-    this._structure.BUTTON_CLOSE.addEventListener('click', this._close.bind(this));
-    this._structure.BUTTON_NEXT.addEventListener('click', this._next.bind(this));
-    this._structure.BUTTON_PREV.addEventListener('click', this._prev.bind(this));
+    this._structure.BUTTON_CLOSE.addEventListener('click', this.remove.bind(this));
+    this._structure.BUTTON_NEXT.addEventListener('click', this.next.bind(this));
+    this._structure.BUTTON_PREV.addEventListener('click', this.prev.bind(this));
   }
 
 
 
-
-  _handleOpenLitebox(image) {
-    if (!document.body.contains(this._LITEBOX)) {
-      document.body.appendChild(this._LITEBOX);
+  open(element) {
+    if (document.body.contains(this._LITEBOX)) {
+      return;
     }
+    
+    document.body.appendChild(this._LITEBOX);
 
-    if (this.options.animations) {
-      this._animationCleanup('animate-in');
-    }
-
+    this._animate('before-load', null, this.options.animation);
     this._showLoader();
-    this._handleImageChange(image);
+    this._beforeLoad(element[this.options.target], () => {
+      this._afterLoad(element);
+    });
   }
 
-
-
-
-
-  _handleImageChange(image, direction = null) {
-    var tmp = new Image();
-    var self = this;
-    
-    tmp.src = image.getAttribute(this.options.target);
-    
-    tmp.onload = function() {
-      if (self.options.animations && direction) {
-        self._LITEBOX.classList.add(`animate-to-${direction === 'next' ? 'left' : 'right'}`);
-
-        self._LITEBOX.addEventListener('animationend', (event) => {
-          if (event.animationName === 'litebox-fade-out') {
-            imageLoaded(this.src);
-
-            self._LITEBOX.classList.remove(`animate-to-${direction === 'next' ? 'left' : 'right'}`);
-            self._LITEBOX.classList.add(`animate-from-${direction === 'next' ? 'right' : 'left'}`);
-          }
-
-          if (event.animationName === 'litebox-fade-in') {
-            self._LITEBOX.classList.remove(`animate-from-${direction === 'next' ? 'right' : 'left'}`);
-          }
-        });
-      } else {
-        imageLoaded(this.src);
-      }
-    };
-
-    tmp.onerror = function() {
-      self._current = null;
-
-      self._hideLoader();
-      self._toggleButtons();
-      self._showError();
-    };
-
-    function imageLoaded(src) {
-      self._structure.IMAGE.src = src;
-      self._current = image;
-
-      self._hideLoader();
-      self._toggleCaption();
-      self._toggleButtons();
+  remove() {
+    if (!document.body.contains(this._LITEBOX)) {
+      return;
     }
+
+    this._animate('before-unload', () => {
+      document.body.removeChild(this._LITEBOX);
+      
+      this._current = null;
+      this._reset();
+    }, this.options.animation);
   }
-  
 
+  next() {
+    var next = this.hasNext();
     
-
-  
-  /**
-   * Calls a function to remove Litebox from the DOM once the
-   * fade-out animation has finished (if activated).
-   */
-  _close() {
-    if (this.options.animations) {
-      this._LITEBOX.classList.add('animate-out');
-
-      var self = this;
-
-      this._animationCleanup('animate-out', function() {
-        self._removeLitebox();
+    if (next) {
+      this._showLoader();
+      this._beforeLoad(next[this.options.target], () => {
+        this._animate('before-next', () => {
+          this._afterLoad(next);
+          this._animate('after-next', null, this.options.animation);
+        }, this.options.animation);
       });
-    } else {
-      this._removeLitebox();
+    }
+  }
+  
+  prev() {
+    var prev = this.hasPrev();
+    
+    if (prev) {
+      this._showLoader();
+      this._beforeLoad(prev[this.options.target], () => {
+        this._animate('before-prev', () => {
+          this._afterLoad(prev);
+          this._animate('after-prev', null, this.options.animation);
+        }, this.options.animation);
+      });
     }
   }
 
-  /**
-   * Removes the Litebox wrapper from the DOM and resets
-   * the internal structure and current element. Also removes the event
-   * listener to improve memory usage.
-   */
-  _removeLitebox() {
-    document.body.removeChild(this._LITEBOX);
+  _beforeLoad(src, cb) {
+    var image = new Image();
 
-    this.current = null;
-    this._applyAttributes();
+    image.src = src;
+    image.onload = cb;
+    image.onerror = () => {
+      cb();
+
+      this._showError();
+    };
+  }
+
+  _afterLoad(element) {
+    this._structure.IMAGE.src = element[this.options.target];
+    this._structure.INNER_WRAPPER.classList.remove('is-hidden');
+    this._current = element;
+
+    this._hideError();
+    this._hideLoader();
+    this._toggleCaption();
+    this._toggleButtons();
+  }
+  
+
+
+  _animate(className, cb, time) {
+    if (this.options.animation && this.options.animation > 0) {
+      this._LITEBOX.classList.add(className);
+      
+      setTimeout(() => {
+        if (cb) cb();
+
+        this._LITEBOX.classList.remove(className);
+      }, time);
+    } else {
+      if (cb) cb();
+    }
+  }
+
+
+
+  hasNext() {
+    if (!this._current) {
+      return;
+    }
+
+    var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
+    var i = gallery.indexOf(this._current);
+
+    if (this.options.loop && (i + 1) === gallery.length) {
+      return gallery[0];
+    }
+
+    return gallery[i + 1] || false;
+  }
+
+  hasPrev() {
+    if (!this._current) {
+      return;
+    }
+
+    var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
+    var i = gallery.indexOf(this._current);
+
+    if (this.options.loop && i === 0) {
+      return gallery[gallery.length - 1];
+    }
+
+    return gallery[i - 1] || false;
   }
 
 
@@ -344,44 +374,23 @@ class Litebox {
    */
   _toggleButtons() {
     this._structure.BUTTON_CLOSE.classList.remove(this.options.classNames.hidden);
+
     if (this._isInGallery()) {
-      if (!this._isLast()) {
-        this._structure.BUTTON_NEXT.classList.remove(this.options.classNames.hidden);
-      } else {
+      if (this._isLast() && !this.options.loop) {
         this._structure.BUTTON_NEXT.classList.add(this.options.classNames.hidden);
-      }
-
-      if (!this._isFirst()) {
-        this._structure.BUTTON_PREV.classList.remove(this.options.classNames.hidden);
       } else {
+        this._structure.BUTTON_NEXT.classList.remove(this.options.classNames.hidden);
+      }
+
+      if (this._isFirst() && !this.options.loop) {
         this._structure.BUTTON_PREV.classList.add(this.options.classNames.hidden);
+      } else {
+        this._structure.BUTTON_PREV.classList.remove(this.options.classNames.hidden);
       }
     }
   }
 
 
-
-  /**
-   * Displays the next image in the gallery. If there is no more
-   * image, it returns the function.
-   */
-  _next() {
-    if (this._getNext()) {
-      this._handleImageChange(this._getNext(), 'next');
-    }
-  }
-
-
-
-  /**
-   * Displays the previous image in the gallery. If there is no
-   * previous image, return the function.
-   */
-  _prev() {
-    if (this._getPrev()) {
-      this._handleImageChange(this._getPrev(), 'prev');
-    }
-  }
 
 
 
@@ -419,6 +428,10 @@ class Litebox {
    */
   _showError() {
     this._structure.ERROR.classList.remove(this.options.classNames.hidden);
+  }
+
+  _hideError() {
+    this._structure.ERROR.classList.add(this.options.classNames.hidden);
   }
 
 
@@ -473,21 +486,6 @@ class Litebox {
   }
 
 
-  _getNext() {
-    var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-    var i = gallery.indexOf(this._current);
-
-    return gallery[i + 1];
-  }
-
-  _getPrev() {
-    var gallery = this._collection[this._current.dataset.gallery.toUpperCase()];
-    var i = gallery.indexOf(this._current);
-
-    return gallery[i - 1];
-  }
-  
-
 
   /**
    * Separates images based on their gallery attribute. All images
@@ -519,20 +517,6 @@ class Litebox {
     });
 
     this._collection = collection;
-  }
-
-
-
-  _animationCleanup(name, cb) {
-    if (!this.options.animations || !name) return;
-
-    var wrapper = this._LITEBOX;
-
-    this._LITEBOX.addEventListener('animationend', function() {
-      wrapper.classList.remove(name);
-
-      if (cb) cb();
-    }, { once: true });
   }
 
 
@@ -588,8 +572,9 @@ class Litebox {
       keyboardShortcuts: true,
       touch: true,
       autohideControls: true,
+      slideshow: 5000,
       loop: false,
-      animations: true,
+      animation: 500,
       labels: {
         close: 'Close',
         next: 'Show next image',
@@ -613,5 +598,3 @@ class Litebox {
     };
   }
 }
-
-new Litebox();

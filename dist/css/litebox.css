@@ -134,39 +134,35 @@
     -webkit-transform: translateX(0);
             transform: translateX(0); } }
 
-.litebox.is-animated.animate-in {
+.litebox.is-animated.before-load {
   -webkit-animation: litebox-fade-in .5s ease-out forwards;
           animation: litebox-fade-in .5s ease-out forwards; }
-  .litebox.is-animated.animate-in .litebox-wrapper {
+  .litebox.is-animated.before-load .litebox-wrapper {
     -webkit-animation: litebox-slide-up .5s ease-out forwards;
             animation: litebox-slide-up .5s ease-out forwards; }
 
-.litebox.is-animated.animate-out {
+.litebox.is-animated.before-unload {
   -webkit-animation: litebox-fade-out .5s ease-out forwards;
           animation: litebox-fade-out .5s ease-out forwards; }
-  .litebox.is-animated.animate-out .litebox-wrapper {
+  .litebox.is-animated.before-unload .litebox-wrapper {
     -webkit-animation: litebox-slide-down .5s ease-out forwards;
             animation: litebox-slide-down .5s ease-out forwards; }
 
-.litebox.is-animated.animate-to-left .litebox-wrapper {
-  opacity: 0;
-  -webkit-animation: litebox-slide-to-left .5s ease-out, litebox-fade-out .5s ease-out;
-          animation: litebox-slide-to-left .5s ease-out, litebox-fade-out .5s ease-out; }
+.litebox.is-animated.before-next .litebox-wrapper {
+  -webkit-animation: litebox-slide-to-left .5s ease-out forwards, litebox-fade-out .5s ease-out forwards;
+          animation: litebox-slide-to-left .5s ease-out forwards, litebox-fade-out .5s ease-out forwards; }
 
-.litebox.is-animated.animate-from-left .litebox-wrapper {
-  opacity: 0;
-  -webkit-animation: litebox-slide-from-left .5s ease-out forwards, litebox-fade-in .5s ease-out forwards;
-          animation: litebox-slide-from-left .5s ease-out forwards, litebox-fade-in .5s ease-out forwards; }
+.litebox.is-animated.after-next .litebox-wrapper {
+  -webkit-animation: litebox-slide-from-right .5s ease-out, litebox-fade-in .5s ease-out;
+          animation: litebox-slide-from-right .5s ease-out, litebox-fade-in .5s ease-out; }
 
-.litebox.is-animated.animate-to-right .litebox-wrapper {
-  opacity: 0;
-  -webkit-animation: litebox-slide-to-right .5s ease-out, litebox-fade-out .5s ease-out;
-          animation: litebox-slide-to-right .5s ease-out, litebox-fade-out .5s ease-out; }
+.litebox.is-animated.before-prev .litebox-wrapper {
+  -webkit-animation: litebox-slide-to-right .5s ease-out forwards, litebox-fade-out .5s ease-out forwards;
+          animation: litebox-slide-to-right .5s ease-out forwards, litebox-fade-out .5s ease-out forwards; }
 
-.litebox.is-animated.animate-from-right .litebox-wrapper {
-  opacity: 0;
-  -webkit-animation: litebox-slide-from-right .5s ease-out forwards, litebox-fade-in .5s ease-out forwards;
-          animation: litebox-slide-from-right .5s ease-out forwards, litebox-fade-in .5s ease-out forwards; }
+.litebox.is-animated.after-prev .litebox-wrapper {
+  -webkit-animation: litebox-slide-from-left .5s ease-out, litebox-fade-in .5s ease-out;
+          animation: litebox-slide-from-left .5s ease-out, litebox-fade-in .5s ease-out; }
 
 .litebox {
   position: fixed;
@@ -180,7 +176,9 @@
   background-color: rgba(0, 0, 0, 0.5); }
 
 .litebox-wrapper {
-  position: relative; }
+  position: relative;
+  min-width: 20rem;
+  min-height: 10rem; }
   @media screen and (min-width: 40rem) {
     .litebox-wrapper {
       max-width: 92vw;
@@ -191,12 +189,11 @@
       max-height: 100vh; } }
 
 .litebox-image-wrapper {
-  margin: 0;
-  position: relative;
-  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3); }
+  margin: 0; }
 
 .litebox-image {
-  vertical-align: middle; }
+  vertical-align: middle;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3); }
   @media screen and (min-width: 40rem) {
     .litebox-image {
       max-width: 92vw;
@@ -205,6 +202,8 @@
     .litebox-image {
       max-width: 100vw;
       max-height: 100vh; } }
+  .litebox-image.is-hidden {
+    display: none; }
 
 .litebox-caption {
   position: absolute;
@@ -258,11 +257,12 @@
   background-image: url("../icons/arrow-prev.svg"); }
 
 .litebox-error {
+  text-align: center;
   position: absolute;
+  width: 100%;
   top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%);
-          transform: translate(-50%);
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
   color: white; }
   .litebox-error.is-hidden {
     display: none; }

@@ -1,11 +1,10 @@
 .litebox-image-wrapper {
   margin: 0;
-  position: relative;
-  box-shadow: 0 2rem 4rem rgba(0, 0, 0, .3);
 }
 
 .litebox-image {
   vertical-align: middle;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3);
 
   @media screen and (min-width: $breakpoint) {
     max-width: $litebox-width-desktop;
@@ -15,5 +14,9 @@
   @media screen and (max-width: $breakpoint) {
     max-width: $litebox-width-mobile;
     max-height: $litebox-height-mobile;
+  }
+
+  &.is-hidden {
+    display: none;
   }
 }

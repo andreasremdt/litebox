@@ -14,6 +14,8 @@
 
 .litebox-wrapper {
   position: relative;
+  min-width: 20rem;
+  min-height: 10rem;
   
   @media screen and (min-width: $breakpoint) {
     max-width: $litebox-width-desktop;
