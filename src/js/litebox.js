@@ -9,7 +9,7 @@ var Litebox = (function() {
 
   var template = `
     <div class="litebox" data-action="wrapper">
-      <div class="litebox-wrapper">
+      <div class="litebox-wrapper" data-action="inner" hidden>
         <button class="litebox-button litebox-button-close" data-action="close">Close</button>
         <button class="litebox-button litebox-button-next" data-action="next">Show next image</button>
         <button class="litebox-button litebox-button-prev" data-action="prev">Show previous image</button>
@@ -17,15 +17,14 @@ var Litebox = (function() {
           <img class="litebox-image" data-action="image">
           <figcaption class="litebox-caption" data-action="caption"></figcaption>
         </figure>
-        <div class="litebox-error is-hidden">Sorry, the image couldn't be loaded.</div>
+        <div class="litebox-error" hidden>Sorry, the image couldn't be loaded.</div>
       </div>
-      <div class="litebox-loader"></div>
+      <div class="litebox-loader" data-action="loader"></div>
     </div>
   `;
 
   class Litebox {
     constructor(options) {
-      // Assign options and throw an error if the given object is invalid
       if (options && !Litebox._isObject(options)) {
         console.warn(`[Litebox] Expected an object as configuration, received ${typeof options}. Default configuration is used instead.`);
 
@@ -38,9 +37,15 @@ var Litebox = (function() {
       this._litebox = null;
       this._x = 0;
       this._y = 0;
+      this._images = document.querySelectorAll(this.options.el);
+      
+      this._buildCollection(this._images);
 
-      this._buildCollection();
-      this._registerMouseEvents();
+      this._images.forEach(image => image.addEventListener("click", (evt) => {
+        evt.preventDefault();
+
+        this.handleOpen(image);
+      }));
     }
 
     getTemplate() {
@@ -58,11 +63,7 @@ var Litebox = (function() {
       return new Promise((resolve, reject) => {
         var tmp = new Image();
 
-        tmp.onload = () => {
-          img.src = src;
-          resolve();
-        }
-
+        tmp.onload = resolve;
         tmp.onerror = reject;
         tmp.src = src;
       });
@@ -72,37 +73,46 @@ var Litebox = (function() {
       var src = target.getAttribute(this.options.target),
           caption = target.getAttribute(this.options.caption),
           figcaption = html.querySelector('[data-action="caption"]'),
+          inner = html.querySelector('[data-action="inner"]'),
           img = html.querySelector('[data-action="image"]'),
           next = html.querySelector('[data-action="next"]'),
+          loader = html.querySelector('[data-action="loader"]'),
           prev = html.querySelector('[data-action="prev"]');
 
-      return this.loadImage(src, img).then(() => {
-        if (caption) {
-          figcaption.removeAttribute("hidden");
-          figcaption.textContent = caption;
-        } else {
-          figcaption.setAttribute("hidden", true);
-          figcaption.textContent = "";
-        }
-  
-        next.setAttribute("hidden", true);
-        prev.setAttribute("hidden", true);
-  
-        if (this._isInGallery()) {
-          if (!this._isLast() || this.options.loop) {
-            next.removeAttribute("hidden");
-          }
-  
-          if (!this._isFirst() || this.options.loop) {
-            prev.removeAttribute("hidden");
-          }
-        }
-  
-        return html;
+      this.loadImage(src, img).then(() => {
+        img.src = src;
+        inner.removeAttribute("hidden");
+        loader.setAttribute("hidden", true);
       });
+
+      inner.setAttribute("hidden", true);
+      loader.removeAttribute("hidden");
+
+      if (caption) {
+        figcaption.removeAttribute("hidden");
+        figcaption.textContent = caption;
+      } else {
+        figcaption.setAttribute("hidden", true);
+        figcaption.textContent = "";
+      }
+
+      next.setAttribute("hidden", true);
+      prev.setAttribute("hidden", true);
+
+      if (this._isInGallery()) {
+        if (!this._isLast() || this.options.loop) {
+          next.removeAttribute("hidden");
+        }
+
+        if (!this._isFirst() || this.options.loop) {
+          prev.removeAttribute("hidden");
+        }
+      }
+
+      return html;
     }
 
-    async open(image) {
+    handleOpen = async (image) => {
       this._current = image;
 
       var html = await this.getHTML(
@@ -134,7 +144,7 @@ var Litebox = (function() {
       if (image) {
         this._current = image;
 
-        this.getHTML(this._litebox, image);  
+        this.getHTML(this._litebox, image);
       }
     }
 
@@ -230,26 +240,6 @@ var Litebox = (function() {
 
 
     /**
-     * Registers all mouse events.
-     */
-    _registerMouseEvents() {
-      // Adds an event listener to every image found
-      for (let gallery in this._collection) {
-        for (let item in this._collection[gallery]) {
-          let image = this._collection[gallery][item];
-
-          image.addEventListener('click', (event) => {
-            event.preventDefault();
-
-            this.open(image);
-          });
-        }
-      }
-    }
-
-
-
-    /**
      * Returns true if the current image is part of a gallery.
      * 
      * @returns {Boolean}
@@ -307,8 +297,7 @@ var Litebox = (function() {
      * 
      * @returns {Object} The built collection.
      */
-    _buildCollection() {
-      var images = document.querySelectorAll(this.options.el);
+    _buildCollection(images) {
       var collection = { __: [] };
 
       [].forEach.call(images, image => {
