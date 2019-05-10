@@ -246,10 +246,10 @@ var Litebox = (function() {
      *
      * @param {HTMLElement} image The image the user clicked on.
      */
-    handleOpen = async (image) => {
+    handleOpen = (image) => {
       this._current = image;
 
-      var html = await this.render(
+      var html = this.render(
         this.getTemplate().content.cloneNode(true),
         image
       );

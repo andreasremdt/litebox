@@ -4,26 +4,15 @@
   "description": "Simple and dependency-free vanilla lightbox",
   "main": "src/js/litebox.js",
   "scripts": {
-    "lint:js": "eslint src/js/litebox.js",
-    "css": "node-sass src/scss/litebox.scss dist/css/litebox.css; postcss dist/css/litebox.css --use autoprefixer -d dist/css --no-map",
-    "js": "babel src/js/litebox.js -d dist/js/",
-    "build:prod": "node-sass src/scss/litebox.scss dist/css/litebox.min.css --output-style compressed; postcss dist/css/litebox.min.css --use autoprefixer -d dist/css --no-map; mkdir dist/js/; touch dist/js/litebox.min.js; babel src/js/litebox.js --out-file dist/js/litebox.min.js --compact",
-    "build:dev": "npm run css; npm run js",
-    "build": "npm run build:dev; npm run build:prod",
-    "watch:css": "node-sass src/scss/litebox.scss -w dist/css/litebox.css",
-    "clean": "rm -rf dist/;"
+    "build": "babel src -d dist"
   },
   "author": "Andreas Remdt",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.1",
-    "@babel/preset-env": "^7.0.0",
-    "autoprefixer": "^9.1.5",
-    "eslint": "^5.6.0",
-    "gulp": "^3.9.1",
-    "gulp-sass": "^4.0.1",
-    "node-sass": "^4.9.3",
-    "postcss-cli": "^6.0.0"
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babel-preset-minify": "^0.5.0"
   }
 }
