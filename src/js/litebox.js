@@ -9,7 +9,7 @@ var Litebox = (function() {
 
   var template = `
     <div class="litebox" data-action="wrapper">
-      <div class="litebox-wrapper" data-action="inner" hidden>
+      <div class="litebox-wrapper" data-action="inner">
         <button class="litebox-button litebox-button-close" data-action="close">Close</button>
         <button class="litebox-button litebox-button-next" data-action="next">Show next image</button>
         <button class="litebox-button litebox-button-prev" data-action="prev">Show previous image</button>
@@ -17,8 +17,8 @@ var Litebox = (function() {
           <img class="litebox-image" data-action="image">
           <figcaption class="litebox-caption" data-action="caption"></figcaption>
         </figure>
-        <div class="litebox-error" hidden>Sorry, the image couldn't be loaded.</div>
       </div>
+      <div class="litebox-error" data-action="error">Sorry, the image couldn't be loaded.</div>
       <div class="litebox-loader" data-action="loader"></div>
     </div>
   `;
@@ -66,6 +66,7 @@ var Litebox = (function() {
         tmp.onload = resolve;
         tmp.onerror = reject;
         tmp.src = src;
+        img.src = src;
       });
     }
 
@@ -76,17 +77,20 @@ var Litebox = (function() {
           inner = html.querySelector('[data-action="inner"]'),
           img = html.querySelector('[data-action="image"]'),
           next = html.querySelector('[data-action="next"]'),
+          error = html.querySelector('[data-action="error"]'),
           loader = html.querySelector('[data-action="loader"]'),
           prev = html.querySelector('[data-action="prev"]');
 
-      this.loadImage(src, img).then(() => {
-        img.src = src;
-        inner.removeAttribute("hidden");
-        loader.setAttribute("hidden", true);
-      });
-
+      error.setAttribute("hidden", true);
       inner.setAttribute("hidden", true);
       loader.removeAttribute("hidden");
+      next.setAttribute("hidden", true);
+      prev.setAttribute("hidden", true);
+
+      this.loadImage(src, img)
+        .then(() => inner.removeAttribute("hidden"))
+        .catch(() => error.removeAttribute("hidden"))
+        .finally(() => loader.setAttribute("hidden", true));
 
       if (caption) {
         figcaption.removeAttribute("hidden");
@@ -95,9 +99,6 @@ var Litebox = (function() {
         figcaption.setAttribute("hidden", true);
         figcaption.textContent = "";
       }
-
-      next.setAttribute("hidden", true);
-      prev.setAttribute("hidden", true);
 
       if (this._isInGallery()) {
         if (!this._isLast() || this.options.loop) {
