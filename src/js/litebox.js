@@ -1,7 +1,12 @@
-/**
- * Litebox
- * 
- * Copyright (c) 2018 by Andreas Remdt
+/*!
+ * Litebox 0.8.3
+ * by Andreas Remdt
+ *
+ * Official repository:
+ * https://github.com/andreasremdt/litebox
+ *
+ * Copyright Andreas Remdt
+ * Released under the MIT license
  */
 
 var Litebox = (function() {
@@ -48,6 +53,16 @@ var Litebox = (function() {
       }));
     }
 
+
+
+    /**
+     * Gets the template containing the HTML structure for Litebox.
+     * 
+     * If a user provided a custom template (and if it was found), it will
+     * be used. Otherwise the default template (see on top) will be used.
+     *
+     * @return HTMLTemplateElement
+     */
     getTemplate() {
       var node = document.createElement("template"),
           override = document.querySelector(this.options.template);
@@ -59,6 +74,17 @@ var Litebox = (function() {
       return node;
     }
 
+
+
+    /**
+     * Asynchonously loads an image and returns a Promise which
+     * is either fulfilled if the image has been fetched or failed
+     * if the URL didn't respond with a 200 status code.
+     *
+     * @param {String} src The URL to fetch the image from.
+     * @param {HTMLImageElement} image The image node.
+     * @return Promise
+     */
     loadImage(src, img) {
       return new Promise((resolve, reject) => {
         var tmp = new Image();
@@ -70,7 +96,17 @@ var Litebox = (function() {
       });
     }
 
-    getHTML(html, target) {
+
+
+    /**
+     * Renders the entire Litebox structure conditionally based on
+     * image properties and user configuration.
+     *
+     * @param {HTMLTemplateElement} html The HTML template.
+     * @param {HTMLImageElement} target The image to be rendered.
+     * @return {HTMLTemplateElement} The processed HTML structure.
+     */
+    render(html, target) {
       var src = target.getAttribute(this.options.target),
           caption = target.getAttribute(this.options.caption),
           figcaption = html.querySelector('[data-action="caption"]'),
@@ -113,20 +149,12 @@ var Litebox = (function() {
       return html;
     }
 
-    handleOpen = async (image) => {
-      this._current = image;
 
-      var html = await this.getHTML(
-        this.getTemplate().content.cloneNode(true),
-        image
-      );
 
-      document.body.appendChild(html);
-
-      this._litebox = document.querySelector('[data-action="wrapper"]');
-      this.registerEvents();
-    }
-
+    /**
+     * Removes Litebox from the document and destroys all event handlers
+     * to prevent memory leaks.
+     */
     close() {
       if (this._litebox) {
         document.body.removeChild(this._litebox);
@@ -139,16 +167,36 @@ var Litebox = (function() {
       }
     }
 
+
+
+    /**
+     * Displays the next/previous image. Checks if there is a
+     * next/previous image and then calls the render function.
+     *
+     * @param {String} direction: Either `next` or `prev`.
+     */
     switch(direction) {
       var image = this.exists(direction);
 
       if (image) {
         this._current = image;
 
-        this.getHTML(this._litebox, image);
+        this.render(this._litebox, image);
       }
     }
 
+
+
+    /**
+     * In case an image is part of a gallery, checks if there's
+     * a next/previous image in the gallery. If so, returns the 
+     * found image. If the user has set `loop` to true in the options and
+     * the first/last image has been reached, it will return the first/last
+     * image in the gallery.
+     *
+     * @param {String} direction: Either `next` or `prev`.
+     * @return {HTMLImageElement}
+     */
     exists(direction) {
       if (!this._current || !this._isInGallery()) return false;
 
@@ -170,6 +218,12 @@ var Litebox = (function() {
       }
     }
 
+
+
+    /**
+     * Registers mouse, keyboard and touch events. Keyboard and touch
+     * can be disabled from the config.
+     */
     registerEvents() {
       this._litebox.addEventListener("click", this.handleClick);
 
@@ -183,6 +237,38 @@ var Litebox = (function() {
       }
     }
 
+
+
+    /**
+     * Handles the click event the user triggered by opening
+     * an image. Takes the image that the user clicked on as the 
+     * only parameter and appends the rendered Litebox to the document.
+     *
+     * @param {HTMLElement} image The image the user clicked on.
+     */
+    handleOpen = async (image) => {
+      this._current = image;
+
+      var html = await this.render(
+        this.getTemplate().content.cloneNode(true),
+        image
+      );
+
+      document.body.appendChild(html);
+
+      this._litebox = document.querySelector('[data-action="wrapper"]');
+      this.registerEvents();
+    }
+
+
+
+    /**
+     * Handles the click event the user triggered through the Litebox
+     * buttons (next, prev, close). Decides which action should be done
+     * based on the action attribute.
+     *
+     * @param {Event} evt
+     */
     handleClick = (evt) => {
       switch (evt.target.dataset.action) {
         case "next":
@@ -197,6 +283,14 @@ var Litebox = (function() {
       }
     }
     
+
+
+    /**
+     * Handles the keyboard event the user triggered by pressing any key
+     * on the keyboard. Decides which action should be done based on the keycode.
+     *
+     * @param {Event} evt
+     */
     handleKeyDown = (evt) => {
       switch (evt.keyCode) {
         case 27:
@@ -213,11 +307,28 @@ var Litebox = (function() {
       }
     }
 
+
+
+    /**
+     * Handles the touch event the user triggered by touching
+     * on the screen. It will store the coordinates of the touch.
+     *
+     * @param {Event} evt
+     */
     handleTouchStart = (evt) => {
       this._x = evt.touches[0].clientX;
       this._y = evt.touches[0].clientY;
     }
 
+
+
+    /**
+     * Handles the touch event the user triggered by swiping
+     * on the screen. If a swipe has been detected, it will decide
+     * the direction and show the next/previous image.
+     *
+     * @param {Event} evt
+     */
     handleTouchMove = (evt) => {
       var x = evt.touches[0].clientX;
       var y = evt.touches[0].clientY;
@@ -337,11 +448,12 @@ var Litebox = (function() {
 
 
     /**
-     * Deep merges two objectes.
+     * Deep merges two objectes. This function is used for merging the
+     * default config with the custom one the user can submit.
      *  
      * @param {Object} target The target object to merge in
      * @param {Object} source The source object to merge from
-     * @returns {Object} The newly merged object
+     * @returns {Object}
      */
     static _merge(target, source) {
       let output = Object.assign({}, target);
